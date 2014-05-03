@@ -37,7 +37,7 @@ public:
   virtual file_status_e read(generic_packetizer_c *ptzr, bool force = false);
   virtual void identify();
   virtual void create_packetizer(int64_t tid);
-  virtual int get_progress();
+  virtual float get_progress();
   virtual bool is_simple_subtitle_container() {
     return true;
   }

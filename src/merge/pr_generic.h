@@ -376,7 +376,7 @@ public:
   virtual void read_headers() = 0;
   virtual file_status_e read(generic_packetizer_c *ptzr, bool force = false) = 0;
   virtual void read_all();
-  virtual int get_progress();
+  virtual float get_progress();
   virtual void set_headers();
   virtual void set_headers_for_track(int64_t tid);
   virtual void identify() = 0;

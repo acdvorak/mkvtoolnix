@@ -2143,12 +2143,12 @@ kax_reader_c::process_block_group(KaxCluster *cluster,
   block_track->units_processed   += block->NumberFrames();
 }
 
-int
+float
 kax_reader_c::get_progress() {
   if (0 != m_segment_duration)
-    return (m_last_timecode - std::max(m_first_timecode, static_cast<int64_t>(0))) * 100 / m_segment_duration;
+    return (m_last_timecode - std::max(m_first_timecode, static_cast<int64_t>(0))) * 100.0f / m_segment_duration;
 
-  return 100 * m_in->getFilePointer() / m_size;
+  return 100.0f * m_in->getFilePointer() / m_size;
 }
 
 void

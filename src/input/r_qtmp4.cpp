@@ -1531,15 +1531,15 @@ qtmp4_reader_c::create_packetizers() {
     create_packetizer(m_demuxers[i]->id);
 }
 
-int
+float
 qtmp4_reader_c::get_progress() {
   if (-1 == m_main_dmx)
-    return 100;
+    return 100.0f;
 
   qtmp4_demuxer_cptr &dmx = m_demuxers[m_main_dmx];
   unsigned int max_chunks = (0 == dmx->sample_size) ? dmx->sample_table.size() : dmx->chunk_table.size();
 
-  return 100 * dmx->pos / max_chunks;
+  return 100.0f * dmx->pos / max_chunks;
 }
 
 void

@@ -75,7 +75,7 @@ public:
   virtual void identify();
   virtual void create_packetizer(int64_t tid);
   virtual void create_packetizers();
-  virtual int get_progress();
+  virtual float get_progress();
   virtual bool is_simple_subtitle_container() {
     return true;
   }

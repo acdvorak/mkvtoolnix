@@ -152,6 +152,7 @@ bool g_write_meta_seek_for_clusters         = false;
 bool g_no_lacing                            = false;
 bool g_no_linking                           = true;
 bool g_use_durations                        = false;
+bool g_precise_progress                     = false;
 
 double g_timecode_scale                     = TIMECODE_SCALE;
 timecode_scale_mode_e g_timecode_scale_mode = TIMECODE_SCALE_MODE_NORMAL;
@@ -535,31 +536,39 @@ determine_display_reader() {
   return winner->reader;
 }
 
+static void
+display_progress_pct(float percentage) {
+  if (g_precise_progress)
+    mxinfo(boost::format(Y("Progress: %1$7.5f%%%2%")) % percentage % "\r");
+  else
+    mxinfo(boost::format(Y("Progress: %1%%%%2%")) % (int)percentage % "\r");
+}
+
 /** \brief Selects a reader for displaying its progress information
 */
 static void
 display_progress(bool is_100percent = false) {
   static auto s_no_progress             = debugging_option_c{"no_progress"};
   static int64_t s_previous_progress_on = 0;
-  static int s_previous_percentage      = -1;
+  static float s_previous_percentage    = -1;
 
   if (s_no_progress)
     return;
 
   if (is_100percent) {
-    mxinfo(boost::format(Y("Progress: 100%%%1%")) % "\r");
+    display_progress_pct(100.0f);
     return;
   }
 
   if (!s_display_reader)
     s_display_reader = determine_display_reader();
 
-  bool display_progress  = false;
-  int current_percentage = (s_display_reader->get_progress() + s_display_files_done * 100) / s_display_path_length;
-  int64_t current_time   = get_current_time_millis();
+  bool display_progress    = false;
+  float current_percentage = (s_display_reader->get_progress() + s_display_files_done * 100.0f) / s_display_path_length;
+  int64_t current_time     = get_current_time_millis();
 
   if (   (-1 == s_previous_percentage)
-      || ((100 == current_percentage) && (100 > s_previous_percentage))
+      || ((100.0f == current_percentage) && (100.0f > s_previous_percentage))
       || ((current_percentage != s_previous_percentage) && ((current_time - s_previous_progress_on) >= 500)))
     display_progress = true;
 
@@ -569,7 +578,7 @@ display_progress(bool is_100percent = false) {
   // if (2 < current_percentage)
   //   exit(42);
 
-  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % current_percentage % "\r");
+  display_progress_pct(current_percentage);
 
   s_previous_percentage  = current_percentage;
   s_previous_progress_on = current_time;

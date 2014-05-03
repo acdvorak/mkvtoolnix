@@ -1575,9 +1575,9 @@ generic_reader_c::add_available_track_id_range(int64_t start,
     add_available_track_id(id);
 }
 
-int
+float
 generic_reader_c::get_progress() {
-  return 100 * m_in->getFilePointer() / m_size;
+  return 100.0f * m_in->getFilePointer() / m_size;
 }
 
 mm_io_c *
