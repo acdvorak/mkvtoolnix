@@ -193,11 +193,13 @@ usf_reader_c::read(generic_packetizer_c *ptzr,
   return FILE_STATUS_MOREDATA;
 }
 
-float
+progress_c
 usf_reader_c::get_progress() {
   if (!m_longest_track || m_longest_track->m_entries.empty())
-    return 0.0f;
-  return 100.0f - std::distance(m_longest_track->m_current_entry, std::vector<usf_entry_t>::const_iterator(m_longest_track->m_entries.end())) * 100.0f / m_longest_track->m_entries.size();
+    return progress_c::zero();
+  auto num_entries_total = m_longest_track->m_entries.size();
+  auto num_entries_left  = std::distance(m_longest_track->m_current_entry, std::vector<usf_entry_t>::const_iterator(m_longest_track->m_entries.end()));
+  return progress_c::u(num_entries_total - num_entries_left, num_entries_total);
 }
 
 int64_t

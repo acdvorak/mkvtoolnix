@@ -819,9 +819,9 @@ avi_reader_c::read(generic_packetizer_c *ptzr,
   return flush_packetizers();
 }
 
-float
+progress_c
 avi_reader_c::get_progress() {
-  return 0 == m_bytes_to_process ? 0.0f : 100.0f * m_bytes_processed / m_bytes_to_process;
+  return progress_c::u(m_bytes_processed, m_bytes_to_process);
 }
 
 void

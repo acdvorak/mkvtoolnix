@@ -225,6 +225,7 @@ static bitvalue_c s_seguid_prev(128), s_seguid_current(128), s_seguid_next(128);
 static int s_display_files_done           = 0;
 static int s_display_path_length          = 1;
 static generic_reader_c *s_display_reader = nullptr;
+static progress_c s_display_progress_done;
 
 static EbmlHead *s_head                   = nullptr;
 
@@ -537,11 +538,13 @@ determine_display_reader() {
 }
 
 static void
-display_progress_pct(float percentage) {
+display_progress_output(progress_c total_progress) {
+  static boost::format s_format_precise  (Y("Progress: %4$9.5f%%: %1%/%2%%3%"));
+  static boost::format s_format_imprecise(Y("Progress: %1%%%%2%"));
   if (g_precise_progress)
-    mxinfo(boost::format(Y("Progress: %1$7.5f%%%2%")) % percentage % "\r");
+    mxinfo(s_format_precise % total_progress.done() % total_progress.total() % "\n" % total_progress.pct());
   else
-    mxinfo(boost::format(Y("Progress: %1%%%%2%")) % (int)percentage % "\r");
+    mxinfo(s_format_imprecise % static_cast<int8_t>(total_progress.pct()) % "\n");
 }
 
 /** \brief Selects a reader for displaying its progress information
@@ -550,37 +553,41 @@ static void
 display_progress(bool is_100percent = false) {
   static auto s_no_progress             = debugging_option_c{"no_progress"};
   static int64_t s_previous_progress_on = 0;
-  static float s_previous_percentage    = -1;
+  static progress_c s_previous_progress;
 
   if (s_no_progress)
     return;
 
   if (is_100percent) {
-    display_progress_pct(100.0f);
+    display_progress_output(s_display_progress_done + progress_c::complete(s_previous_progress));
     return;
   }
 
   if (!s_display_reader)
     s_display_reader = determine_display_reader();
 
-  bool display_progress    = false;
-  float current_percentage = (s_display_reader->get_progress() + s_display_files_done * 100.0f) / s_display_path_length;
-  int64_t current_time     = get_current_time_millis();
+  bool display_progress       = false;
+  progress_c current_progress = s_display_reader->get_progress();
+  int64_t current_time        = get_current_time_millis();
 
-  if (   (-1 == s_previous_percentage)
-      || ((100.0f == current_percentage) && (100.0f > s_previous_percentage))
-      || ((current_percentage != s_previous_percentage) && ((current_time - s_previous_progress_on) >= 500)))
+  if (   (!s_previous_progress.is_initialized())
+      || (current_progress.is_complete() && !s_previous_progress.is_complete())
+      || ((current_progress != s_previous_progress) && ((current_time - s_previous_progress_on) >= 500)))
     display_progress = true;
 
   if (!display_progress)
     return;
 
-  // if (2 < current_percentage)
+  // if (2 < current_progress)
   //   exit(42);
 
-  display_progress_pct(current_percentage);
+  double files_pct = static_cast<double>(s_display_files_done) / s_display_path_length;
+  progress_c running_progress = s_display_progress_done + current_progress;
+  progress_c total_progress = progress_c{static_cast<int64_t>(files_pct * running_progress.done()), static_cast<int64_t>(files_pct * running_progress.total())};
 
-  s_previous_percentage  = current_percentage;
+  display_progress_output(total_progress);
+
+  s_previous_progress    = current_progress;
   s_previous_progress_on = current_time;
 }
 
@@ -2003,6 +2010,7 @@ append_track(packetizer_t &ptzr,
   // Is the current file currently used for displaying the progress? If yes
   // then replace it with the next one.
   if (s_display_reader == dst_file.reader) {
+    s_display_progress_done += s_display_reader->get_progress();
     s_display_files_done++;
     s_display_reader = src_file.reader;
   }

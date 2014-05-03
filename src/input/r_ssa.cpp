@@ -83,11 +83,11 @@ ssa_reader_c::read(generic_packetizer_c *,
   return m_subs->empty() ? flush_packetizers() : FILE_STATUS_MOREDATA;
 }
 
-float
+progress_c
 ssa_reader_c::get_progress() {
   int num_entries = m_subs->get_num_entries();
 
-  return 0 == num_entries ? 100.0f : 100.0f * m_subs->get_num_processed() / num_entries;
+  return progress_c{m_subs->get_num_processed(), num_entries};
 }
 
 void

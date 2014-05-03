@@ -641,9 +641,9 @@ vobsub_reader_c::read(generic_packetizer_c *ptzr,
   return track->idx >= track->entries.size() ? flush_packetizers() : FILE_STATUS_MOREDATA;
 }
 
-float
+progress_c
 vobsub_reader_c::get_progress() {
-  return 100.0f * indices_processed / num_indices;
+  return progress_c{indices_processed, num_indices};
 }
 
 void
