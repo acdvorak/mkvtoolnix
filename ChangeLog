@@ -1,3 +1,12 @@
+2014-05-04  Andy Dvorak    <andy@andydvorak.net>
+
+        * mkvmerge, mkvextract: new feature: Added "--precise-progress" option
+        to output fractional progress values instead of rounded integer
+        percentages (for scripts and third party GUIs).
+
+        * mkvmerge, mkvextract, mmg: enhancement: Smoother, more accurate, and
+        more frequent progress updates.
+
 2014-04-21  Moritz Bunkus  <moritz@bunkus.org>
 
         * mmg: bug fix: Selecting a subtitle track correctly sets the
