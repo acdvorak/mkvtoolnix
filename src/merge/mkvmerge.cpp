@@ -51,6 +51,7 @@
 #include "common/fs_sys_helpers.h"
 #include "common/iso639.h"
 #include "common/mm_io.h"
+#include "common/progress.h"
 #include "common/segmentinfo.h"
 #include "common/split_arg_parsing.h"
 #include "common/strings/formatting.h"
@@ -2325,8 +2326,8 @@ display_playlist_scan_progress(size_t num_scanned,
   if (s_no_progress)
     return;
 
-  auto current_percentage = (num_scanned * 1000 + 5) / total_num_to_scan / 10;
-  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % current_percentage % "\r");
+  auto current_progress = progress_c::sz(num_scanned, total_num_to_scan);
+  display_progress(current_progress);
 }
 
 static filelist_t
