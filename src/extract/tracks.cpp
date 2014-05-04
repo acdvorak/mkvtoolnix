@@ -423,8 +423,6 @@ extract_tracks(const std::string &file_name,
     KaxChapters all_chapters;
     KaxTags all_tags;
 
-    progress_c previous_progress;
-
     while ((l1 = file->read_next_level1_element())) {
       if (Is<KaxInfo>(l1) && !segment_info_found) {
         segment_info_found = true;
@@ -440,7 +438,7 @@ extract_tracks(const std::string &file_name,
         KaxCluster *cluster = static_cast<KaxCluster *>(l1);
 
         if (0 == verbose)
-          display_progress(previous_progress = progress_c{static_cast<int64_t>(in->getFilePointer()), file_size});
+          display_progress(progress_c{static_cast<int64_t>(in->getFilePointer()), file_size});
 
         KaxClusterTimecode *ctc = FindChild<KaxClusterTimecode>(l1);
         if (ctc) {
@@ -512,7 +510,7 @@ extract_tracks(const std::string &file_name,
     close_extractors();
 
     if (0 == verbose)
-      display_progress(progress_c::complete(previous_progress));
+      display_progress_complete();
 
     return true;
   } catch (...) {

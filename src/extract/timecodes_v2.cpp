@@ -237,8 +237,6 @@ extract_timecodes(const std::string &file_name,
     EbmlElement *l2   = nullptr;
     EbmlElement *l3   = nullptr;
 
-    progress_c previous_progress;
-
     while (l1 && (0 >= upper_lvl_el)) {
       if (Is<KaxInfo>(l1)) {
         // General info about this Matroska file
@@ -289,7 +287,7 @@ extract_timecodes(const std::string &file_name,
         uint64_t cluster_tc = 0;
 
         if (0 == verbose)
-          display_progress(previous_progress = progress_c{static_cast<int64_t>(in->getFilePointer()), file_size});
+          display_progress(progress_c{static_cast<int64_t>(in->getFilePointer()), file_size});
 
         upper_lvl_el = 0;
         l2           = es->FindNextElement(EBML_CONTEXT(l1), upper_lvl_el, 0xFFFFFFFFL, true, 1);
@@ -379,7 +377,7 @@ extract_timecodes(const std::string &file_name,
     close_timecode_files();
 
     if (0 == verbose)
-      display_progress(progress_c::complete(previous_progress));
+      display_progress_complete();
 
   } catch (...) {
     show_error(Y("Caught exception"));

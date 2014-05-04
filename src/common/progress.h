@@ -20,7 +20,8 @@ extern bool g_precise_progress;
 
 class progress_c;
 
-void display_progress(progress_c total_progress);
+void display_progress(progress_c current_progress, bool is_100percent = false);
+void display_progress_complete();
 
 class progress_c {
 private:

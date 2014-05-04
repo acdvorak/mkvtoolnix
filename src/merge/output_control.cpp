@@ -549,33 +549,21 @@ total_read_count() {
 */
 static void
 compute_display_progress(bool is_100percent = false) {
-  static auto s_no_progress             = debugging_option_c{"no_progress"};
-  static int64_t s_previous_progress_on = 0;
-  static int64_t s_total_read_count     = total_read_count();
-  static progress_c s_previous_progress;
+  static auto s_no_progress         = debugging_option_c{"no_progress"};
+  static int64_t s_total_read_count = total_read_count();
 
   if (s_no_progress)
     return;
 
   if (is_100percent) {
-    display_progress(progress_c::complete(s_display_progress_done + s_previous_progress));
+    display_progress_complete();
     return;
   }
 
   if (!s_display_reader)
     s_display_reader = determine_display_reader();
 
-  bool do_display_progress    = false;
   progress_c current_progress = s_display_reader->get_progress();
-  int64_t current_time        = get_current_time_millis();
-
-  if (   (!s_previous_progress.is_initialized())
-      || (current_progress.is_complete() && !s_previous_progress.is_complete())
-      || ((current_progress != s_previous_progress) && ((current_time - s_previous_progress_on) >= 500)))
-    do_display_progress = true;
-
-  if (!do_display_progress)
-    return;
 
   // if (2 < current_progress.pct())
   //   exit(42);
@@ -584,9 +572,6 @@ compute_display_progress(bool is_100percent = false) {
   progress_c total_progress = progress_c{running_progress.done(), s_total_read_count};
 
   display_progress(total_progress);
-
-  s_previous_progress    = current_progress;
-  s_previous_progress_on = current_time;
 }
 
 /** \brief Add some tags to the list of all tags
