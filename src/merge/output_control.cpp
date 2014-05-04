@@ -544,12 +544,21 @@ display_progress_output(progress_c total_progress) {
   mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
 }
 
+static int64_t
+sum_read_bytes() {
+  int64_t b = 0;
+  for (auto &current : g_files)
+    b += current.reader->get_progress().total();
+  return b;
+}
+
 /** \brief Selects a reader for displaying its progress information
 */
 static void
 display_progress(bool is_100percent = false) {
   static auto s_no_progress             = debugging_option_c{"no_progress"};
   static int64_t s_previous_progress_on = 0;
+  static int64_t s_total_read_bytes     = sum_read_bytes();
   static progress_c s_previous_progress;
 
   if (s_no_progress)
@@ -578,9 +587,8 @@ display_progress(bool is_100percent = false) {
   // if (2 < current_progress)
   //   exit(42);
 
-  double files_pct = static_cast<double>(s_display_files_done + 1) / s_display_path_length;
   progress_c running_progress = s_display_progress_done + current_progress;
-  progress_c total_progress = progress_c{static_cast<int64_t>(files_pct * running_progress.done()), running_progress.total()};
+  progress_c total_progress = progress_c{running_progress.done(), s_total_read_bytes};
 
   display_progress_output(total_progress);
 
