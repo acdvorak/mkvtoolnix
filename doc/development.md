@@ -205,8 +205,8 @@ MPEG PS reader's handling of h264 tracks.
 
 ## `get_progress()` ##
 
-Returns the demuxing progress, a value between 0 and 100. Usually
-based on the number of bytes processed.
+Returns the demuxing progress, an object containing the precise values used
+to compute the final percentage. Usually based on the number of bytes processed.
 
 ## `identify()` ##
 
