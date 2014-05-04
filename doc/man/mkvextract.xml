@@ -123,7 +123,7 @@
      <term><option>--precise-progress</option></term>
      <listitem>
       <para>
-       Output fractional progress values instead of rounded integer percentages.  Scripts and GUIS that interface with &mkvmerge;
+       Output fractional progress values instead of rounded integer percentages.  Scripts and GUIs that interface with &mkvmerge;
        can use this option to receive more frequent and precise progress measurements to display to the user.
       </para>
      </listitem>
