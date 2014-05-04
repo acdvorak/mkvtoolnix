@@ -539,12 +539,9 @@ determine_display_reader() {
 
 static void
 display_progress_output(progress_c total_progress) {
-  static boost::format s_format_precise  (Y("Progress: %4$9.5f%%: %1%/%2%%3%"));
-  static boost::format s_format_imprecise(Y("Progress: %1%%%%2%"));
-  if (g_precise_progress)
-    mxinfo(s_format_precise % total_progress.done() % total_progress.total() % "\r" % total_progress.pct());
-  else
-    mxinfo(s_format_imprecise % static_cast<int8_t>(total_progress.pct()) % "\r");
+  auto progress = g_precise_progress ? (boost::format("%1%/%2% %3$7.5f") % total_progress.done() % total_progress.total() % total_progress.pct())
+                                     : (boost::format("%1%") % static_cast<int8_t>(total_progress.pct()));
+  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
 }
 
 /** \brief Selects a reader for displaying its progress information
