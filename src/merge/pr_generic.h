@@ -301,14 +301,6 @@ public:
   }
 
   // comparison
-  bool operator <(progress_c const &other) const {
-    return !m_is_initialized &&  other.m_is_initialized ? true
-         :  m_is_initialized && !other.m_is_initialized ? false
-         : !m_is_complete    &&  other.m_is_complete    ? true
-         :  m_is_complete    && !other.m_is_complete    ? false
-         :                                                m_pct < other.m_pct;
-  }
-
   bool operator ==(progress_c const &other) const {
     return m_is_initialized == other.m_is_initialized
         && m_is_complete    == other.m_is_complete
