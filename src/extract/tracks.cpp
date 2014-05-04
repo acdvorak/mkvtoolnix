@@ -36,6 +36,7 @@
 #include "common/kax_file.h"
 #include "common/mm_io_x.h"
 #include "common/mm_write_buffer_io.h"
+#include "common/progress.h"
 #include "extract/mkvextract.h"
 #include "extract/xtr_base.h"
 
@@ -437,7 +438,7 @@ extract_tracks(const std::string &file_name,
         KaxCluster *cluster = static_cast<KaxCluster *>(l1);
 
         if (0 == verbose)
-          mxinfo(boost::format(Y("Progress: %1%%%%2%")) % (int)(in->getFilePointer() * 100 / file_size) % "\r");
+          display_progress(progress_c{static_cast<int64_t>(in->getFilePointer()), file_size});
 
         KaxClusterTimecode *ctc = FindChild<KaxClusterTimecode>(l1);
         if (ctc) {

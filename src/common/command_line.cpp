@@ -23,6 +23,7 @@
 #include "common/hacks.h"
 #include "common/mm_io_x.h"
 #include "common/mm_write_buffer_io.h"
+#include "common/progress.h"
 #include "common/strings/editing.h"
 #include "common/translation.h"
 #include "common/version.h"
@@ -203,6 +204,10 @@ handle_common_cli_args(std::vector<std::string> &args,
 
     } else if (args[i] == "--gui-mode") {
       g_gui_mode = true;
+      args.erase(args.begin() + i, args.begin() + i + 1);
+
+    } else if (args[i] == "--precise-progress") {
+      g_precise_progress = true;
       args.erase(args.begin() + i, args.begin() + i + 1);
 
     } else

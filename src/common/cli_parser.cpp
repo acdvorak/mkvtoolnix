@@ -176,6 +176,7 @@ cli_parser_c::add_common_options() {
   OPT("command-line-charset=<charset>", YT("Charset for strings on the command line"));
   OPT("output-charset=<cset>",          YT("Output messages in this charset"));
   OPT("r|redirect-output=<file>",       YT("Redirects all messages into this file."));
+  OPT("precise-progress",               YT("Output more precise progress information."));
   OPT("@file",                          YT("Reads additional command line options from the specified file (see man page)."));
   OPT("h|help",                         YT("Show this help."));
   OPT("V|version",                      YT("Show version information."));
