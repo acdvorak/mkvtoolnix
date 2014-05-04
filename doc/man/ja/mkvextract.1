@@ -63,6 +63,13 @@ Matroska(TM)
 全てのメッセージを、コンソールではなく\fIfile\-name\fRに書き出します。出力をリダイレクトすることで同じことが容易に可能ですが、このオプションが必要になることもあります。ターミナルが出力を、ファイルに書き出す前に処理してしまう場合などです。\fB\-\-output\-charset\fRによって指定された文字コードは尊重されます。
 .RE
 .PP
+\fB\-\-precise\-progress\fR
+.RS 4
+Output fractional progress values instead of rounded integer percentages\&. Scripts and GUIS that interface with
+\fBmkvmerge\fR(1)
+can use this option to receive more frequent and precise progress measurements to display to the user\&.
+.RE
+.PP
 \fB\-\-ui\-language\fR \fIcode\fR
 .RS 4
 指定した\fIcode\fRを強制的に言語コード(例: 日本語ならば\*(Aqja_JP\*(Aq)として使用します。しかし、環境変数\fILANG\fRや\fILC_MESSAGES\fR、\fILC_ALL\fRを使用したほうが好ましいでしょう。\fIcode\fRにlistと指定すると、指定できる言語コードの一覧を出力します。

@@ -119,6 +119,16 @@
      </listitem>
     </varlistentry>
 
+    <varlistentry id="mkvextract.description.common.precise_progress">
+     <term><option>--precise-progress</option></term>
+     <listitem>
+      <para>
+       Output fractional progress values instead of rounded integer percentages.  Scripts and GUIS that interface with &mkvmerge;
+       can use this option to receive more frequent and precise progress measurements to display to the user.
+      </para>
+     </listitem>
+    </varlistentry>
+
     <varlistentry id="mkvextract.description.common.ui_language">
      <term><option>--ui-language</option> <parameter>code</parameter></term>
      <listitem>
