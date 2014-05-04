@@ -549,7 +549,7 @@ total_read_count() {
 /** \brief Selects a reader for displaying its progress information
 */
 static void
-display_progress(bool is_100percent = false) {
+compute_display_progress(bool is_100percent = false) {
   static auto s_no_progress             = debugging_option_c{"no_progress"};
   static int64_t s_previous_progress_on = 0;
   static int64_t s_total_read_count     = total_read_count();
@@ -559,23 +559,23 @@ display_progress(bool is_100percent = false) {
     return;
 
   if (is_100percent) {
-    display_progress_output(progress_c::complete(s_display_progress_done + s_previous_progress));
+    display_progress(progress_c::complete(s_display_progress_done + s_previous_progress));
     return;
   }
 
   if (!s_display_reader)
     s_display_reader = determine_display_reader();
 
-  bool display_progress       = false;
+  bool do_display_progress    = false;
   progress_c current_progress = s_display_reader->get_progress();
   int64_t current_time        = get_current_time_millis();
 
   if (   (!s_previous_progress.is_initialized())
       || (current_progress.is_complete() && !s_previous_progress.is_complete())
       || ((current_progress != s_previous_progress) && ((current_time - s_previous_progress_on) >= 500)))
-    display_progress = true;
+    do_display_progress = true;
 
-  if (!display_progress)
+  if (!do_display_progress)
     return;
 
   // if (2 < current_progress.pct())
@@ -584,7 +584,7 @@ display_progress(bool is_100percent = false) {
   progress_c running_progress = s_display_progress_done + current_progress;
   progress_c total_progress = progress_c{running_progress.done(), s_total_read_count};
 
-  display_progress_output(total_progress);
+  display_progress(total_progress);
 
   s_previous_progress    = current_progress;
   s_previous_progress_on = current_time;
@@ -2174,7 +2174,7 @@ pull_packetizers_for_packets() {
            && (FILE_STATUS_MOREDATA == ptzr.status)
            && !ptzr.packetizer->packet_available()) {
       ptzr.status = ptzr.packetizer->read();
-      display_progress();
+      compute_display_progress();
     }
 
     if (   (FILE_STATUS_MOREDATA != ptzr.status)
@@ -2271,7 +2271,7 @@ main_loop() {
 
       // display some progress information
       if (1 <= verbose)
-        display_progress();
+        compute_display_progress();
 
     } else if (!appended_a_track) // exit if there are no more packets
       break;
@@ -2282,7 +2282,7 @@ main_loop() {
     g_cluster_helper->render();
 
   if (1 <= verbose)
-    display_progress(true);
+    compute_display_progress(true);
 }
 
 /** \brief Deletes the file readers and other associated objects
