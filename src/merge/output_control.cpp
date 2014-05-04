@@ -2170,8 +2170,12 @@ pull_packetizers_for_packets() {
 
     while (   !ptzr.pack
            && (FILE_STATUS_MOREDATA == ptzr.status)
-           && !ptzr.packetizer->packet_available())
+           && !ptzr.packetizer->packet_available()) {
       ptzr.status = ptzr.packetizer->read();
+    
+      if (g_precise_progress)
+        display_progress();
+    }
 
     if (   (FILE_STATUS_MOREDATA != ptzr.status)
            && (FILE_STATUS_MOREDATA == ptzr.old_status))
