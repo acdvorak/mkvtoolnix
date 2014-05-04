@@ -548,7 +548,7 @@ total_read_count() {
 static void
 display_progress_output(progress_c total_progress) {
   auto progress = g_precise_progress ? (boost::format("%1%/%2% %3$7.5f") % total_progress.done() % total_progress.total() % total_progress.pct())
-                                     : (boost::format("%1%") % static_cast<int8_t>(total_progress.pct()));
+                                     : (boost::format("%1$1.0f") % total_progress.pct());
   mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
 }
 
