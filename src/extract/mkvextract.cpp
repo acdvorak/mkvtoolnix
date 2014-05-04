@@ -84,9 +84,6 @@ main(int argc,
   if (options_c::em_tracks == options.m_extraction_mode) {
     extract_tracks(options.m_file_name, options.m_tracks, options.m_parse_mode);
 
-    if (0 == verbose)
-      mxinfo(Y("Progress: 100%\n"));
-
   } else if (options_c::em_tags == options.m_extraction_mode)
     extract_tags(options.m_file_name, options.m_parse_mode);
 
