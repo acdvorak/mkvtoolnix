@@ -153,7 +153,6 @@ bool g_write_meta_seek_for_clusters         = false;
 bool g_no_lacing                            = false;
 bool g_no_linking                           = true;
 bool g_use_durations                        = false;
-bool g_precise_progress                     = false;
 
 double g_timecode_scale                     = TIMECODE_SCALE;
 timecode_scale_mode_e g_timecode_scale_mode = TIMECODE_SCALE_MODE_NORMAL;

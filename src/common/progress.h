@@ -18,6 +18,10 @@
 
 extern bool g_precise_progress;
 
+class progress_c;
+
+void display_progress(progress_c total_progress);
+
 class progress_c {
 private:
   int64_t m_done;
@@ -143,12 +147,5 @@ public:
     return progress_c{static_cast<int64_t>(done), static_cast<int64_t>(total)};
   }
 };
-
-inline void
-display_progress(progress_c total_progress) {
-  auto progress = g_precise_progress ? (boost::format("%1%/%2% %3$7.5f") % total_progress.done() % total_progress.total() % total_progress.pct())
-                                     : (boost::format("%1$1.0f") % total_progress.pct());
-  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
-}
 
 #endif  // MTX_PROGRESS_H
