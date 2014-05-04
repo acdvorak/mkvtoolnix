@@ -584,7 +584,7 @@ display_progress(bool is_100percent = false) {
   if (!display_progress)
     return;
 
-  // if (2 < current_progress)
+  // if (2 < current_progress.pct())
   //   exit(42);
 
   progress_c running_progress = s_display_progress_done + current_progress;
