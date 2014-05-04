@@ -69,6 +69,7 @@
 #include "common/mm_mpls_multi_file_io.h"
 #include "common/mm_read_buffer_io.h"
 #include "common/mm_write_buffer_io.h"
+#include "common/progress.h"
 #include "common/strings/formatting.h"
 #include "common/tags/tags.h"
 #include "common/translation.h"
@@ -543,13 +544,6 @@ total_read_count() {
   for (auto &current : g_files)
     b += current.reader->get_progress().total();
   return b;
-}
-
-static void
-display_progress_output(progress_c total_progress) {
-  auto progress = g_precise_progress ? (boost::format("%1%/%2% %3$7.5f") % total_progress.done() % total_progress.total() % total_progress.pct())
-                                     : (boost::format("%1$1.0f") % total_progress.pct());
-  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
 }
 
 /** \brief Selects a reader for displaying its progress information

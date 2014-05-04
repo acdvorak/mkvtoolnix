@@ -29,6 +29,7 @@
 #include "common/chapters/chapters.h"
 #include "common/compression.h"
 #include "common/option_with_source.h"
+#include "common/progress.h"
 #include "common/stereo_mode.h"
 #include "common/strings/editing.h"
 #include "common/tags/tags.h"
@@ -219,128 +220,6 @@ enum attach_mode_e {
   ATTACH_MODE_SKIP,
   ATTACH_MODE_TO_FIRST_FILE,
   ATTACH_MODE_TO_ALL_FILES,
-};
-
-class progress_c {
-private:
-  int64_t m_done;
-  int64_t m_total;
-  int64_t m_remaining;
-  double  m_pct;          // [ 0.0, 100.0 ]
-  bool    m_is_complete;  // is_100percent
-  bool    m_is_initialized;
-
-public:
-  // Uninitialized
-  progress_c()
-    : m_done{}
-    , m_total{}
-    , m_remaining{}
-    , m_pct{}
-    , m_is_complete{}
-    , m_is_initialized{false}
-  {
-  }
-
-  // In progress
-  progress_c(int64_t num_done, int64_t num_total, bool initialized = true)
-    : m_done{num_done}
-    , m_total{num_total}
-    , m_remaining{num_total - num_done}
-    , m_pct{num_total != 0 ? 100.0 * num_done / num_total : 0.0}
-    , m_is_complete{num_total > 0 && num_done == num_total}
-    , m_is_initialized{initialized}
-  {
-  }
-
-  // Complete
-  explicit progress_c(int64_t num_total)
-    : m_done{num_total}
-    , m_total{num_total}
-    , m_remaining{0}
-    , m_pct{num_total != 0 ? 100.0 : 0.0}
-    , m_is_complete{num_total > 0}
-    , m_is_initialized{true}
-  {
-  }
-
-  int64_t done() const {
-    return m_done;
-  }
-
-  int64_t total() const {
-    return m_total;
-  }
-
-  int64_t remaining() const {
-    return m_remaining;
-  }
-
-  double pct() const {
-    return m_pct;
-  }
-
-  bool is_complete() const {
-    return m_is_complete;
-  }
-
-  bool is_initialized() const {
-    return m_is_initialized;
-  }
-
-  // arithmetic
-  progress_c operator +(progress_c const &other) {
-    return progress_c{m_done + other.m_done, m_total + other.m_total, m_is_initialized || other.m_is_initialized};
-  }
-
-  progress_c operator +=(progress_c const &other) {
-    m_done += other.m_done;
-    m_total += other.m_total;
-    m_is_initialized |= other.m_is_initialized;
-    return *this;
-  }
-
-  // comparison
-  bool operator ==(progress_c const &other) const {
-    return m_is_initialized == other.m_is_initialized
-        && m_is_complete    == other.m_is_complete
-        && m_done           == other.m_done
-        && m_total          == other.m_total
-        && m_done           == other.m_done;
-  }
-
-  bool operator !=(progress_c const &other) const {
-    return !operator==(other);
-  }
-
-  // construction
-  static progress_c uninitialized() {
-    return progress_c{};
-  }
-
-  static progress_c zero() {
-    return progress_c{0};
-  }
-
-  static progress_c zero(int64_t total) {
-    return progress_c{0, total};
-  }
-
-  static progress_c in_progress(int64_t done, int64_t total) {
-    return progress_c{done, total};
-  }
-
-  static progress_c complete(int64_t total) {
-    return progress_c{total};
-  }
-
-  static progress_c complete(progress_c other) {
-    return progress_c{other.m_total, other.m_total, other.m_is_initialized};
-  }
-
-  static progress_c u(uint64_t done, uint64_t total) {
-    return progress_c{static_cast<int64_t>(done), static_cast<int64_t>(total)};
-  }
 };
 
 class track_info_c {
