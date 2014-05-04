@@ -556,7 +556,7 @@ display_progress(bool is_100percent = false) {
     return;
 
   if (is_100percent) {
-    display_progress_output(s_display_progress_done + progress_c::complete(s_previous_progress));
+    display_progress_output(progress_c::complete(s_display_progress_done + s_previous_progress));
     return;
   }
 
@@ -578,9 +578,9 @@ display_progress(bool is_100percent = false) {
   // if (2 < current_progress)
   //   exit(42);
 
-  double files_pct = static_cast<double>(s_display_files_done) / s_display_path_length;
+  double files_pct = static_cast<double>(s_display_files_done + 1) / s_display_path_length;
   progress_c running_progress = s_display_progress_done + current_progress;
-  progress_c total_progress = progress_c{static_cast<int64_t>(files_pct * running_progress.done()), static_cast<int64_t>(files_pct * running_progress.total())};
+  progress_c total_progress = progress_c{static_cast<int64_t>(files_pct * running_progress.done()), running_progress.total()};
 
   display_progress_output(total_progress);
 
