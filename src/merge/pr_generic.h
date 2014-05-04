@@ -294,7 +294,10 @@ public:
   }
 
   progress_c operator +=(progress_c const &other) {
-    return *this + other;
+    m_done += other.m_done;
+    m_total += other.m_total;
+    m_is_initialized |= other.m_is_initialized;
+    return *this;
   }
 
   // comparison
