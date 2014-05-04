@@ -537,19 +537,19 @@ determine_display_reader() {
   return winner->reader;
 }
 
+static int64_t
+total_read_count() {
+  int64_t b = 0;
+  for (auto &current : g_files)
+    b += current.reader->get_progress().total();
+  return b;
+}
+
 static void
 display_progress_output(progress_c total_progress) {
   auto progress = g_precise_progress ? (boost::format("%1%/%2% %3$7.5f") % total_progress.done() % total_progress.total() % total_progress.pct())
                                      : (boost::format("%1%") % static_cast<int8_t>(total_progress.pct()));
   mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
-}
-
-static int64_t
-sum_read_bytes() {
-  int64_t b = 0;
-  for (auto &current : g_files)
-    b += current.reader->get_progress().total();
-  return b;
 }
 
 /** \brief Selects a reader for displaying its progress information
@@ -558,7 +558,7 @@ static void
 display_progress(bool is_100percent = false) {
   static auto s_no_progress             = debugging_option_c{"no_progress"};
   static int64_t s_previous_progress_on = 0;
-  static int64_t s_total_read_bytes     = sum_read_bytes();
+  static int64_t s_total_read_count     = total_read_count();
   static progress_c s_previous_progress;
 
   if (s_no_progress)
@@ -588,7 +588,7 @@ display_progress(bool is_100percent = false) {
   //   exit(42);
 
   progress_c running_progress = s_display_progress_done + current_progress;
-  progress_c total_progress = progress_c{running_progress.done(), s_total_read_bytes};
+  progress_c total_progress = progress_c{running_progress.done(), s_total_read_count};
 
   display_progress_output(total_progress);
 
