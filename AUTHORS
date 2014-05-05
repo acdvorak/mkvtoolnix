@@ -55,7 +55,7 @@ Duret, Xavier <xaviour.maillists@gmail.com>
     * Bugfix for timecode and default duration calculation for MPEG-1/2 tracks
     * 'Interlaced' header flag for interlaced MPEG-1/2 tracks
 
-Dvorak, Andy <andy@andydvorak.net>
+Dvorak, Andrew <acdvorak@gmail.com>
     * Progress reporting enhancements and --precise-progress option
 
 Galassi, Damiano <damiog@gmail.com>
