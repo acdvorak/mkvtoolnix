@@ -19,6 +19,8 @@
 #include <wx/dialog.h>
 #include <wx/process.h>
 
+#include "common/progress.h"
+
 #if defined(SYS_WINDOWS)
 # include "common/fs_sys_helpers.h"
 # include "mmg/taskbar_progress.h"
@@ -51,7 +53,8 @@ protected:
 #endif  // SYS_WINDOWS
   bool m_abort_button_changed, m_scanning_playlists;
 
-  int m_exit_code, m_progress;
+  int m_exit_code;
+  progress_c m_progress;
   int64_t m_next_remaining_time_update, m_start_time;
 
   wxTimer m_read_input_timer;
@@ -67,7 +70,7 @@ public:
   void run();
 
   void update_label(wxString const &text);
-  void update_gauge(long value);
+  void update_gauge(progress_c progress);
   void update_remaining_time();
 
   void on_ok(wxCommandEvent &evt);

@@ -13,6 +13,7 @@
 
 #include "common/common_pch.h"
 
+#include <boost/lexical_cast.hpp>
 #include <wx/wx.h>
 #include <wx/clipbrd.h>
 #include <wx/file.h>
@@ -173,12 +174,14 @@ mux_dialog::update_label(wxString const &text) {
 }
 
 void
-mux_dialog::update_gauge(long value) {
-  m_progress = value;
+mux_dialog::update_gauge(progress_c progress) {
+  long value = static_cast<long>(progress.pct() * 100);
+  m_progress = progress;
+  g_progress->SetRange(100 * 100);
   g_progress->SetValue(value);
 #if defined(SYS_WINDOWS)
   if (m_taskbar_progress)
-    m_taskbar_progress->set_value(value, 100);
+    m_taskbar_progress->set_value(value, 100 * 100);
 #endif  // SYS_WINDOWS
 }
 
@@ -189,10 +192,10 @@ mux_dialog::update_remaining_time() {
 
   int64_t now = get_current_time_millis();
 
-  if ((0 == m_progress) || (now < m_next_remaining_time_update))
+  if ((0 == m_progress.done()) || (now < m_next_remaining_time_update))
     return;
 
-  int64_t total_time     = (now - m_start_time) * 100 / m_progress;
+  int64_t total_time     = (now - m_start_time) * 100 / m_progress.pct();
   int64_t remaining_time = total_time - now + m_start_time;
   st_remaining_time->SetLabel(wxU(create_minutes_seconds_time_string(static_cast<unsigned int>(remaining_time / 1000))));
 
@@ -293,13 +296,13 @@ mux_dialog::on_output_available(wxCommandEvent &evt) {
     m_next_remaining_time_update = m_start_time + 8000;
 
   } else if (line.Find(Z("Progress")) == 0) {
-    if (line.Find(wxT("%")) != 0) {
-      line.Remove(line.Find(wxT("%")));
-      auto tmp   = line.AfterLast(wxT(' '));
-      long value = 0;
-      tmp.ToLong(&value);
-      if ((value >= 0) && (value <= 100))
-        update_gauge(value);
+    static boost::regex expr("([0-9]+)/([0-9]+)");
+    boost::smatch match;
+    if (boost::regex_search(std::string{line.mbc_str()}, match, expr)) {
+      int64_t done  = boost::lexical_cast<int64_t>(std::string{match[1].first, match[1].second});
+      int64_t total = boost::lexical_cast<int64_t>(std::string{match[2].first, match[2].second});
+      auto progress = progress_c{done, total};
+      update_gauge(progress);
     }
 
   } else if (line.Length() > 0)
