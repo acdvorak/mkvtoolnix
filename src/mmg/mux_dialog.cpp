@@ -298,11 +298,11 @@ mux_dialog::on_output_available(wxCommandEvent &evt) {
   } else if (line.Find(Z("Progress")) == 0) {
     static boost::regex expr("([0-9]+)/([0-9]+)");
     boost::smatch match;
-    if (boost::regex_search(std::string{line.mbc_str()}, match, expr)) {
-      int64_t done  = boost::lexical_cast<int64_t>(std::string{match[1].first, match[1].second});
-      int64_t total = boost::lexical_cast<int64_t>(std::string{match[2].first, match[2].second});
-      auto progress = progress_c{done, total};
-      update_gauge(progress);
+    auto std_line = std::string{line.mbc_str()};
+    if (boost::regex_search(std_line, match, expr)) {
+      int64_t done  = std::stoll(std::string{match[1].first, match[1].second});
+      int64_t total = std::stoll(std::string{match[2].first, match[2].second});
+      update_gauge(progress_c{done, total});
     }
 
   } else if (line.Length() > 0)
