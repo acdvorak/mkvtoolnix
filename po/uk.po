@@ -2711,12 +2711,12 @@ msgid "Caught exception"
 msgstr "Зафіксоване виключення"
 
 #: src/mmg/cli_options_dlg.cpp:155
-msgid "Causes mkvmerge not to write 'CueDuration' elemenets in the cues."
+msgid "Causes mkvmerge not to write 'CueDuration' elements in the cues."
 msgstr "Змушує mkvmerge не записувати елементи 'CueDuration' до структури cue."
 
 #: src/mmg/cli_options_dlg.cpp:157
 msgid ""
-"Causes mkvmerge not to write 'CueRelativePosition' elemenets in the cues."
+"Causes mkvmerge not to write 'CueRelativePosition' elements in the cues."
 msgstr ""
 "Змушує mkvmerge не записувати елементи 'CueRelativePosition' до структури "
 "cue."

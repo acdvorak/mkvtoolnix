@@ -152,9 +152,9 @@ cli_options_dlg::init_cli_option_list() {
   all_cli_options.push_back(cli_option_t(wxU("--engage vobsub_subpic_stop_cmds"),
                                            Z("Causes mkvmerge to add 'stop display' commands to VobSub subtitle packets that do not contain a duration field.")));
   all_cli_options.push_back(cli_option_t(wxU("--engage no_cue_duration"),
-                                           Z("Causes mkvmerge not to write 'CueDuration' elemenets in the cues.")));
+                                           Z("Causes mkvmerge not to write 'CueDuration' elements in the cues.")));
   all_cli_options.push_back(cli_option_t(wxU("--engage no_cue_relative_position"),
-                                           Z("Causes mkvmerge not to write 'CueRelativePosition' elemenets in the cues.")));
+                                           Z("Causes mkvmerge not to write 'CueRelativePosition' elements in the cues.")));
   all_cli_options.push_back(cli_option_t(wxU("--engage cow"),
                                            Z("No help available.")));
 }

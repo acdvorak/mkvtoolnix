@@ -2691,13 +2691,13 @@ msgid "Caught exception"
 msgstr "Espressione catturata"
 
 #: src/mmg/cli_options_dlg.cpp:155
-msgid "Causes mkvmerge not to write 'CueDuration' elemenets in the cues."
+msgid "Causes mkvmerge not to write 'CueDuration' elements in the cues."
 msgstr ""
 "Imposta mkvmerge per non registrare gli elementi 'CueDuration' nei tagli."
 
 #: src/mmg/cli_options_dlg.cpp:157
 msgid ""
-"Causes mkvmerge not to write 'CueRelativePosition' elemenets in the cues."
+"Causes mkvmerge not to write 'CueRelativePosition' elements in the cues."
 msgstr ""
 "Imposta mkvmerge per non registrare gli elementi 'CueRelativePosition' nei "
 "tagli."

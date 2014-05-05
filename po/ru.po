@@ -2458,11 +2458,11 @@ msgid "Caught exception"
 msgstr "Произошёл выброс исключения"
 
 #: src/mmg/cli_options_dlg.cpp:155
-msgid "Causes mkvmerge not to write 'CueDuration' elemenets in the cues."
+msgid "Causes mkvmerge not to write 'CueDuration' elements in the cues."
 msgstr "Заставляет mkvmerge не записывать в ключи элементы 'CueDuration'"
 
 #: src/mmg/cli_options_dlg.cpp:157
-msgid "Causes mkvmerge not to write 'CueRelativePosition' elemenets in the cues."
+msgid "Causes mkvmerge not to write 'CueRelativePosition' elements in the cues."
 msgstr "Заставляет mkvmerge не записывать в ключи элементы 'CueRelativePosition'"
 
 #: src/mmg/cli_options_dlg.cpp:153

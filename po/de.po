@@ -2467,11 +2467,11 @@ msgid "Caught exception"
 msgstr "Eine Ausnahme wurde abgefangen."
 
 #: src/mmg/cli_options_dlg.cpp:155
-msgid "Causes mkvmerge not to write 'CueDuration' elemenets in the cues."
+msgid "Causes mkvmerge not to write 'CueDuration' elements in the cues."
 msgstr "sorgt dafür, dass Mkvmerge keine »CurDuration«-Elemente in den Indizes schreibt."
 
 #: src/mmg/cli_options_dlg.cpp:157
-msgid "Causes mkvmerge not to write 'CueRelativePosition' elemenets in the cues."
+msgid "Causes mkvmerge not to write 'CueRelativePosition' elements in the cues."
 msgstr "sorgt dafür, dass Mkvmerge keine »CueRelativePosition«-Elemente in den Indizes schreibt."
 
 #: src/mmg/cli_options_dlg.cpp:153
