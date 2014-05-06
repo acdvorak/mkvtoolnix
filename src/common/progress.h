@@ -16,7 +16,12 @@
 
 #include "common/common_pch.h"
 
-extern bool g_precise_progress;
+enum progress_format_e {
+  PF_SIMPLE  = 0,
+  PF_PRECISE = 1,
+};
+
+extern progress_format_e g_progress_format;
 
 class progress_c;
 

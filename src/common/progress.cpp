@@ -17,14 +17,15 @@
 #include "common/fs_sys_helpers.h"
 #include "common/progress.h"
 
-bool g_precise_progress = false;
+progress_format_e g_progress_format = PF_SIMPLE;
 
 static progress_c s_previous_progress;
 
 static void
 display_progress_output(progress_c current_progress) {
-  auto progress = g_precise_progress ? (boost::format("%1%/%2% %3$7.5f") % current_progress.done() % current_progress.total() % current_progress.pct())
-                                     : (boost::format("%1$1.0f") % current_progress.pct());
+  auto progress = PF_PRECISE == g_progress_format
+                    ? (boost::format("%1%/%2% %3$7.5f") % current_progress.done() % current_progress.total() % current_progress.pct())
+                    : (boost::format("%1$1.0f") % current_progress.pct());
   mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
 }
 

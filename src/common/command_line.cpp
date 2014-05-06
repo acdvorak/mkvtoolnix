@@ -206,9 +206,19 @@ handle_common_cli_args(std::vector<std::string> &args,
       g_gui_mode = true;
       args.erase(args.begin() + i, args.begin() + i + 1);
 
-    } else if (args[i] == "--precise-progress") {
-      g_precise_progress = true;
-      args.erase(args.begin() + i, args.begin() + i + 1);
+    } else if (args[i] == "--progress-format") {
+      if ((i + 1) == args.size())
+        mxerror(Y("'--progress-format' lacks its argument.\n"));
+
+      auto fmt = args[i + 1];
+      if (fmt == "simple")
+        g_progress_format = PF_SIMPLE;
+      else if (fmt == "precise")
+        g_progress_format = PF_PRECISE;
+      else
+        mxerror(Y("Invalid argument for '--progress-format'.\n"));
+
+      args.erase(args.begin() + i, args.begin() + i + 2);
 
     } else
       ++i;

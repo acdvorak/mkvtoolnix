@@ -269,7 +269,8 @@ set_usage() {
   usage_text += Y("  --output-charset <cset>  Output messages in this charset\n");
   usage_text += Y("  -r, --redirect-output <file>\n"
                   "                           Redirects all messages into this file.\n");
-  usage_text += Y("  --precise-progress       Output more precise progress information.\n");
+  usage_text += Y("  --progress-format <simple|precise>\n");
+  usage_text += Y("                           Output progress information in the given format.\n");
   usage_text += Y("  --debug <topic>          Turns on debugging output for 'topic'.\n");
   usage_text += Y("  --engage <feature>       Turns on experimental feature 'feature'.\n");
   usage_text += Y("  @optionsfile             Reads additional command line options from\n"
