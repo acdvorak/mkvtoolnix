@@ -842,7 +842,8 @@ mmg_dialog::update_command_line() {
 
   clargs.Clear();
   clargs.Add(options.mkvmerge_exe());
-  clargs.Add(wxT("--progress-format precise"));
+  clargs.Add(wxT("--progress-format"));
+  clargs.Add(wxT("precise"));
   clargs.Add(wxT("--output-charset"));
   clargs.Add(wxT("UTF-8"));
   clargs.Add(wxT("-o"));
