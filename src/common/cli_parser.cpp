@@ -170,18 +170,18 @@ cli_parser_c::add_separator() {
 
 void
 cli_parser_c::add_common_options() {
-  OPT("v|verbose",                      YT("Increase verbosity."));
-  OPT("q|quiet",                        YT("Suppress status output."));
-  OPT("ui-language=<code>",             YT("Force the translations for 'code' to be used."));
-  OPT("command-line-charset=<charset>", YT("Charset for strings on the command line"));
-  OPT("output-charset=<cset>",          YT("Output messages in this charset"));
-  OPT("r|redirect-output=<file>",       YT("Redirects all messages into this file."));
-  OPT("@file",                          YT("Reads additional command line options from the specified file (see man page)."));
-  OPT("h|help",                         YT("Show this help."));
-  OPT("V|version",                      YT("Show version information."));
+  OPT("v|verbose",                        YT("Increase verbosity."));
+  OPT("q|quiet",                          YT("Suppress status output."));
+  OPT("ui-language=<code>",               YT("Force the translations for 'code' to be used."));
+  OPT("command-line-charset=<charset>",   YT("Charset for strings on the command line"));
+  OPT("output-charset=<cset>",            YT("Output messages in this charset"));
+  OPT("r|redirect-output=<file>",         YT("Redirects all messages into this file."));
   OPT("progress-format=<simple|precise>", YT("Output progress information in the given format."));
+  OPT("@file",                            YT("Reads additional command line options from the specified file (see man page)."));
+  OPT("h|help",                           YT("Show this help."));
+  OPT("V|version",                        YT("Show version information."));
 #if defined(HAVE_CURL_EASY_H)
-  OPT("check-for-updates",              YT("Check online for the latest release."));
+  OPT("check-for-updates",                YT("Check online for the latest release."));
 #endif  // defined(HAVE_CURL_EASY_H)
 }
 
