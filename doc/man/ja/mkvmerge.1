@@ -1118,11 +1118,55 @@ to select idle I/O priority in addition to the lowest possible process priority\
 全てのメッセージをコンソールではなく\fIfile\-name\fRで指定したファイルに書き出します。出力リダイレクトによっても同じことが簡単にできますが、このオプションが必要な場合もあります。ターミナルがファイルに書き込む前に出力を処理してしまう場合などです。\fB\-\-output\-charset\fRによって指定された文字コードは尊重されます。
 .RE
 .PP
-\fB\-\-precise\-progress\fR
+\fB\-\-progress\-format\fR \fIsimple|precise\fR
 .RS 4
-Output fractional progress values instead of rounded integer percentages\&. Scripts and GUIs that interface with
+Output progress information in the given format\&.
+.sp
+At the moment
 \fBmkvmerge\fR(1)
-can use this option to receive more frequent and precise progress measurements to display to the user\&.
+supports two different formats\&.
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 1.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  1." 4.2
+.\}
+Simple integer\-based percentage (floored)\&.
+.sp
+Syntax:
+\fB\-\-progress\-format\fR
+simple
+.sp
+Output:
+Progress: 42%
+.sp
+This is the default format if none is specified\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 2.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  2." 4.2
+.\}
+Precise fractional notation with floating point percentage\&.
+.sp
+Syntax:
+\fB\-\-progress\-format\fR
+precise
+.sp
+Output:
+Progress: 17558378982/41562218496 42\&.24601%
+.sp
+Outputs a fraction containing the overall amount read thusfar divided by the overall total amount to read, followed by the resulting floating point percentage\&. Amounts typically represent the number of bytes in the file, but may be different for certain containers and track types (e\&.g\&., RealMedia uses packet count, subtitle tracks use entry count)\&. Scripts and GUIs that interface with
+\fBmkvmerge\fR(1)
+can use this progress format to receive precise progress measurements to display to the user\&.
+.RE
 .RE
 .PP
 \fB\-\-ui\-language\fR \fIcode\fR
