@@ -1,8 +1,8 @@
-2014-05-04  Andy Dvorak    <andy@andydvorak.net>
+2014-05-06  Andrew Dvorak  <acdvorak@gmail.com>
 
-        * mkvmerge, mkvextract: new feature: Added "--precise-progress" option
-        to output fractional progress values instead of rounded integer
-        percentages (for scripts and third party GUIs).
+        * mkvmerge, mkvextract: new feature: Added "--progress-format" option
+        to output fractional progress values instead of integer percentages
+        (for scripts and third party GUIs).
 
         * mkvmerge, mkvextract, mmg: enhancement: Smoother, more accurate, and
         more frequent progress updates.
