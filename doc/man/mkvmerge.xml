@@ -1577,13 +1577,58 @@ $ mkvmerge -o out.mkv '(' file.mkv ')'</screen>
      </listitem>
     </varlistentry>
 
-    <varlistentry id="mkvextract.description.common.precise_progress">
-     <term><option>--precise-progress</option></term>
+    <varlistentry id="mkvextract.description.common.progress_format">
+     <term><option>--progress-format</option> <parameter>simple|precise</parameter></term>
      <listitem>
       <para>
-       Output fractional progress values instead of rounded integer percentages.  Scripts and GUIs that interface with &mkvmerge;
-       can use this option to receive more frequent and precise progress measurements to display to the user.
+       Output progress information in the given format.
       </para>
+
+      <para>
+       At the moment &mkvmerge; supports two different formats.
+      </para>
+
+      <orderedlist>
+       <listitem>
+        <para>
+         Simple integer-based percentage (floored).
+        </para>
+
+        <para>
+         Syntax: <option>--progress-format</option> <literal>simple</literal>
+        </para>
+
+        <para>
+         Output: <code>Progress: 42%</code>
+        </para>
+
+        <para>
+         This is the default format if none is specified.
+        </para>
+       </listitem>
+
+       <listitem>
+        <para>
+         Precise fractional notation with floating point percentage.
+        </para>
+
+        <para>
+         Syntax: <option>--progress-format</option> <literal>precise</literal>
+        </para>
+
+        <para>
+         Output: <code>Progress: 17558378982/41562218496 42.24601%</code>
+        </para>
+
+        <para>
+         Outputs a fraction containing the overall amount read thusfar divided by the overall total amount to read,
+         followed by the resulting floating point percentage.  Amounts typically represent the number of bytes in the file,
+         but may be different for certain containers and track types (e.g., RealMedia uses packet count, subtitle tracks use entry count).
+         Scripts and GUIs that interface with &mkvmerge; can use this progress format to receive precise progress measurements
+         to display to the user.
+        </para>
+       </listitem>
+      </orderedlist>
      </listitem>
     </varlistentry>
 
