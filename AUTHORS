@@ -56,7 +56,7 @@ Duret, Xavier <xaviour.maillists@gmail.com>
     * 'Interlaced' header flag for interlaced MPEG-1/2 tracks
 
 Dvorak, Andrew <acdvorak@gmail.com>
-    * Progress reporting enhancements and --precise-progress option
+    * Progress reporting enhancements and --progress-format option
 
 Galassi, Damiano <damiog@gmail.com>
     * Bugfix for timecodes in MP4 files with edit lists and B frames
