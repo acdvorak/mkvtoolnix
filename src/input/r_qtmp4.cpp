@@ -1542,10 +1542,12 @@ qtmp4_reader_c::get_progress() {
   qtmp4_demuxer_cptr &dmx = m_demuxers[m_main_dmx];
   unsigned int max_chunks = (0 == dmx->sample_size) ? dmx->sample_table.size() : dmx->chunk_table.size();
 
-  double scale = 1.0 * m_size / max_chunks;
-  int64_t demuxer_pos = dmx->pos;
-  int64_t bytes_done = irnd(scale * demuxer_pos);
-  return s_previous_progress = progress_c::u(bytes_done, m_size);
+  auto file_size      = m_size;
+  auto units_read     = dmx->pos;
+  auto units_per_file = max_chunks;
+  double scale = 1.0 * file_size / units_per_file;
+  int64_t bytes_done = irnd(units_read * scale);
+  return PROGRESS_C(bytes_done, file_size);
 }
 
 void
