@@ -30,6 +30,7 @@
 #include "common/endian.h"
 #include "common/hacks.h"
 #include "common/iso639.h"
+#include "common/math.h"
 #include "common/strings/formatting.h"
 #include "common/strings/parsing.h"
 #include "input/r_qtmp4.h"
@@ -1541,7 +1542,10 @@ qtmp4_reader_c::get_progress() {
   qtmp4_demuxer_cptr &dmx = m_demuxers[m_main_dmx];
   unsigned int max_chunks = (0 == dmx->sample_size) ? dmx->sample_table.size() : dmx->chunk_table.size();
 
-  return s_previous_progress = progress_c{dmx->pos, max_chunks};
+  double scale = 1.0 * m_size / max_chunks;
+  int64_t demuxer_pos = dmx->pos;
+  int64_t bytes_done = irnd(scale * demuxer_pos);
+  return s_previous_progress = progress_c::u(bytes_done, m_size);
 }
 
 void
