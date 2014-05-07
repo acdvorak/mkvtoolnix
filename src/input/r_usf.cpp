@@ -17,6 +17,7 @@
 
 #include "common/codec.h"
 #include "common/iso639.h"
+#include "common/math.h"
 #include "common/mm_io.h"
 #include "common/mm_io_x.h"
 #include "common/strings/parsing.h"
@@ -197,9 +198,16 @@ progress_c
 usf_reader_c::get_progress() {
   if (!m_longest_track || m_longest_track->m_entries.empty())
     return progress_c::zero();
+
   auto num_entries_total = m_longest_track->m_entries.size();
   auto num_entries_left  = std::distance(m_longest_track->m_current_entry, std::vector<usf_entry_t>::const_iterator(m_longest_track->m_entries.end()));
-  return progress_c::u(num_entries_total - num_entries_left, num_entries_total);
+
+  auto file_size      = m_size;
+  auto units_read     = num_entries_total - num_entries_left;
+  auto units_per_file = num_entries_total;
+  double scale = 1.0 * file_size / units_per_file;
+  int64_t bytes_done = irnd(units_read * scale);
+  return PROGRESS_C(bytes_done, file_size);
 }
 
 int64_t
