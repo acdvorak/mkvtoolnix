@@ -17,7 +17,6 @@
 #include "common/hacks.h"
 #include "common/iso639.h"
 #include "common/endian.h"
-#include "common/math.h"
 #include "common/mm_io.h"
 #include "common/strings/formatting.h"
 #include "common/strings/parsing.h"
@@ -644,12 +643,7 @@ vobsub_reader_c::read(generic_packetizer_c *ptzr,
 
 progress_c
 vobsub_reader_c::get_progress() {
-  auto file_size      = m_size;
-  auto units_read     = indices_processed;
-  auto units_per_file = num_indices;
-  double scale = 1.0 * file_size / units_per_file;
-  int64_t bytes_done = irnd(units_read * scale);
-  return PROGRESS_C(bytes_done, file_size);
+  return PROGRESS_C_SCALE(m_size, indices_processed, num_indices);
 }
 
 void

@@ -49,7 +49,6 @@
 #include "common/hacks.h"
 #include "common/iso639.h"
 #include "common/ivf.h"
-#include "common/math.h"
 #include "common/mm_io.h"
 #include "common/strings/formatting.h"
 #include "common/strings/parsing.h"
@@ -2145,14 +2144,8 @@ kax_reader_c::process_block_group(KaxCluster *cluster,
 
 progress_c
 kax_reader_c::get_progress() {
-  if (0 != m_segment_duration) {
-    auto file_size      = m_size;
-    auto units_read     = m_last_timecode - std::max(m_first_timecode, static_cast<int64_t> (0));
-    auto units_per_file = m_segment_duration;
-    double scale = 1.0 * file_size / units_per_file;
-    int64_t bytes_done = irnd(units_read * scale);
-    return PROGRESS_C(bytes_done, file_size);
-  }
+  if (0 != m_segment_duration)
+    return PROGRESS_C_SCALE(m_size, m_last_timecode - std::max(m_first_timecode, static_cast<int64_t> (0)), m_segment_duration);
 
   return progress_c::u(m_in->getFilePointer(), m_size);
 }

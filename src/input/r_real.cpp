@@ -20,7 +20,6 @@
 #include "common/ebml.h"
 #include "common/endian.h"
 #include "common/error.h"
-#include "common/math.h"
 #include "input/r_real.h"
 #include "merge/output_control.h"
 #include "output/p_aac.h"
@@ -580,12 +579,7 @@ real_reader_c::deliver_aac_frames(real_demuxer_cptr dmx,
 
 progress_c
 real_reader_c::get_progress() {
-  auto file_size      = file->size;
-  auto units_read     = file->num_packets_read;
-  auto units_per_file = file->num_packets_in_chunk;
-  double scale = 1.0 * file_size / units_per_file;
-  int64_t bytes_done = irnd(units_read * scale);
-  return PROGRESS_C(bytes_done, file_size);
+  return PROGRESS_C_SCALE(file->size, file->num_packets_read, file->num_packets_in_chunk);
 }
 
 void

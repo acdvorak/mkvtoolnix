@@ -15,8 +15,10 @@
 #define MTX_PROGRESS_H
 
 #include "common/common_pch.h"
+#include "common/math.h"
 
 #define PROGRESS_C(done, total) (progress_c{static_cast<int64_t>((done)), static_cast<int64_t>((total))})
+#define PROGRESS_C_SCALE(file_size, units_read, units_per_file) (progress_c::scale(static_cast<int64_t>((file_size)), static_cast<int64_t>((units_read)), static_cast<int64_t>((units_per_file))))
 
 enum progress_format_e {
   PF_SIMPLE  = 0,
@@ -157,6 +159,12 @@ public:
 
   static progress_c sz(size_t done, size_t total) {
     return progress_c{static_cast<int64_t>(done), static_cast<int64_t>(total)};
+  }
+
+  static progress_c scale(int64_t file_size, int64_t units_read, int64_t units_per_file) {
+    double scale = 1.0 * file_size / units_per_file;
+    int64_t bytes_done = irnd(units_read * scale);
+    return progress_c{bytes_done, file_size};
   }
 };
 

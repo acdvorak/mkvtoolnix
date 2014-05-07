@@ -14,7 +14,6 @@
 #include "common/common_pch.h"
 
 #include "common/codec.h"
-#include "common/math.h"
 #include "input/r_srt.h"
 #include "input/subtitles.h"
 
@@ -74,12 +73,7 @@ srt_reader_c::read(generic_packetizer_c *,
 
 progress_c
 srt_reader_c::get_progress() {
-  auto file_size      = m_size;
-  auto units_read     = m_subs->get_num_processed();
-  auto units_per_file = m_subs->get_num_entries();
-  double scale = 1.0 * file_size / units_per_file;
-  int64_t bytes_done = irnd(units_read * scale);
-  return PROGRESS_C(bytes_done, file_size);
+  return PROGRESS_C_SCALE(m_size, m_subs->get_num_processed(), m_subs->get_num_entries());
 }
 
 void
