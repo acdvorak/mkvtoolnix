@@ -16,6 +16,8 @@
 
 #include "common/common_pch.h"
 
+#define PROGRESS_C(done, total) (progress_c{static_cast<int64_t>((done)), static_cast<int64_t>((total))})
+
 enum progress_format_e {
   PF_SIMPLE  = 0,
   PF_PRECISE = 1,
