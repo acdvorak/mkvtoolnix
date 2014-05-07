@@ -2145,8 +2145,12 @@ kax_reader_c::process_block_group(KaxCluster *cluster,
 
 progress_c
 kax_reader_c::get_progress() {
-  if (0 != m_segment_duration)
-    return progress_c{m_last_timecode - std::max(m_first_timecode, static_cast<int64_t>(0)), m_segment_duration};
+  if (0 != m_segment_duration) {
+    double scale = 1.0 * m_size / m_segment_duration;
+    int64_t timecode_offset = m_last_timecode - std::max(m_first_timecode, static_cast<int64_t>(0));
+    int64_t bytes_done = irnd(scale * timecode_offset);
+    return progress_c::u(bytes_done, m_size);
+  }
 
   return progress_c::u(m_in->getFilePointer(), m_size);
 }
