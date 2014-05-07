@@ -60,6 +60,8 @@ public:
     , m_is_complete{num_total > 0 && num_done == num_total}
     , m_is_initialized{initialized}
   {
+    if (m_done > m_total)
+      mxerror(boost::format(Y("progress_c: Programming error: done > total (%1% > %2%). Please file a bug report.\n")) % m_done % m_total);
   }
 
   // Complete
@@ -71,6 +73,8 @@ public:
     , m_is_complete{num_total > 0}
     , m_is_initialized{true}
   {
+    if (m_done > m_total)
+      mxerror(boost::format(Y("progress_c: Programming error: done > total (%1% > %2%). Please file a bug report.\n")) % m_done % m_total);
   }
 
   int64_t done() const {
