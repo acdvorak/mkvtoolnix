@@ -174,7 +174,7 @@ mux_dialog::update_label(wxString const &text) {
 }
 
 void
-mux_dialog::update_gauge(progress_c progress) {
+mux_dialog::update_gauge(progress_c const &progress) {
   long value = static_cast<long>(progress.pct() * 100);
   m_progress = progress;
   g_progress->SetRange(100 * 100);

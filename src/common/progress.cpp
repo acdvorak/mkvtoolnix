@@ -22,7 +22,7 @@ progress_format_e g_progress_format = PF_SIMPLE;
 static progress_c s_previous_progress;
 
 static void
-display_progress_output(progress_c current_progress) {
+display_progress_output(progress_c const &current_progress) {
   auto progress = PF_PRECISE == g_progress_format
                     ? (boost::format("%1%/%2% %3$7.5f") % current_progress.done() % current_progress.total() % current_progress.pct())
                     : (boost::format("%1$1.0f") % current_progress.pct());

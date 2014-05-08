@@ -70,7 +70,7 @@ public:
   void run();
 
   void update_label(wxString const &text);
-  void update_gauge(progress_c progress);
+  void update_gauge(progress_c const &progress);
   void update_remaining_time();
 
   void on_ok(wxCommandEvent &evt);

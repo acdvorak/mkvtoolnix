@@ -29,7 +29,7 @@ extern progress_format_e g_progress_format;
 
 class progress_c;
 
-void display_progress(progress_c current_progress, bool is_100percent = false);
+void display_progress(progress_c const &current_progress, bool is_100percent = false);
 void display_progress_complete();
 
 class progress_c {
@@ -149,7 +149,7 @@ public:
     return progress_c{total};
   }
 
-  static progress_c complete(progress_c other) {
+  static progress_c complete(progress_c const &other) {
     return progress_c{other.m_total, other.m_total, other.m_is_initialized};
   }
 
