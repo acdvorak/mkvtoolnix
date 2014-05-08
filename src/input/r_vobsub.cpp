@@ -643,7 +643,7 @@ vobsub_reader_c::read(generic_packetizer_c *ptzr,
 
 progress_c
 vobsub_reader_c::get_progress() {
-  return PROGRESS_C_SCALE(m_size, indices_processed, num_indices);
+  return progress_c::scale(m_size, indices_processed, num_indices);
 }
 
 void

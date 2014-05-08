@@ -17,9 +17,6 @@
 #include "common/common_pch.h"
 #include "common/math.h"
 
-#define PROGRESS_C(done, total) (progress_c{static_cast<int64_t>((done)), static_cast<int64_t>((total))})
-#define PROGRESS_C_SCALE(file_size, units_read, units_per_file) (progress_c::scale(static_cast<int64_t>((file_size)), static_cast<int64_t>((units_read)), static_cast<int64_t>((units_per_file))))
-
 enum progress_format_e {
   PF_SIMPLE  = 0,
   PF_PRECISE = 1,
@@ -141,7 +138,7 @@ public:
     return progress_c{0, total};
   }
 
-  static progress_c in_progress(int64_t done, int64_t total) {
+  static progress_c i(int64_t done, int64_t total) {
     return progress_c{done, total};
   }
 
@@ -151,14 +148,6 @@ public:
 
   static progress_c complete(progress_c const &other) {
     return progress_c{other.m_total, other.m_total, other.m_is_initialized};
-  }
-
-  static progress_c u(uint64_t done, uint64_t total) {
-    return progress_c{static_cast<int64_t>(done), static_cast<int64_t>(total)};
-  }
-
-  static progress_c sz(size_t done, size_t total) {
-    return progress_c{static_cast<int64_t>(done), static_cast<int64_t>(total)};
   }
 
   static progress_c scale(int64_t file_size, int64_t units_read, int64_t units_per_file) {

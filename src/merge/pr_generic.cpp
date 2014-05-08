@@ -1577,7 +1577,7 @@ generic_reader_c::add_available_track_id_range(int64_t start,
 
 progress_c
 generic_reader_c::get_progress() {
-  return progress_c::u(m_in->getFilePointer(), m_size);
+  return progress_c::i(m_in->getFilePointer(), m_size);
 }
 
 mm_io_c *

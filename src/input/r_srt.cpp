@@ -73,7 +73,7 @@ srt_reader_c::read(generic_packetizer_c *,
 
 progress_c
 srt_reader_c::get_progress() {
-  return PROGRESS_C_SCALE(m_size, m_subs->get_num_processed(), m_subs->get_num_entries());
+  return progress_c::scale(m_size, m_subs->get_num_processed(), m_subs->get_num_entries());
 }
 
 void

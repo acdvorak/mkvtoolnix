@@ -821,7 +821,7 @@ avi_reader_c::read(generic_packetizer_c *ptzr,
 
 progress_c
 avi_reader_c::get_progress() {
-  return progress_c::u(m_bytes_processed, m_bytes_to_process);
+  return progress_c::i(m_bytes_processed, m_bytes_to_process);
 }
 
 void

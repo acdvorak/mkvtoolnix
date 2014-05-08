@@ -201,7 +201,7 @@ usf_reader_c::get_progress() {
   auto num_entries_total = m_longest_track->m_entries.size();
   auto num_entries_left  = std::distance(m_longest_track->m_current_entry, std::vector<usf_entry_t>::const_iterator(m_longest_track->m_entries.end()));
 
-  return PROGRESS_C_SCALE(m_size, num_entries_total - num_entries_left, num_entries_total);
+  return progress_c::scale(m_size, num_entries_total - num_entries_left, num_entries_total);
 }
 
 int64_t

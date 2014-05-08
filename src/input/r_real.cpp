@@ -579,7 +579,7 @@ real_reader_c::deliver_aac_frames(real_demuxer_cptr dmx,
 
 progress_c
 real_reader_c::get_progress() {
-  return PROGRESS_C_SCALE(file->size, file->num_packets_read, file->num_packets_in_chunk);
+  return progress_c::scale(file->size, file->num_packets_read, file->num_packets_in_chunk);
 }
 
 void
