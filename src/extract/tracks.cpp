@@ -438,7 +438,7 @@ extract_tracks(const std::string &file_name,
         KaxCluster *cluster = static_cast<KaxCluster *>(l1);
 
         if (0 == verbose)
-          display_progress(progress_c{static_cast<int64_t>(in->getFilePointer()), file_size});
+          display_progress(progress_detail_c::simple(in->getFilePointer(), file_size));
 
         KaxClusterTimecode *ctc = FindChild<KaxClusterTimecode>(l1);
         if (ctc) {

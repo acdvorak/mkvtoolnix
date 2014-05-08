@@ -571,7 +571,12 @@ compute_display_progress(bool is_100percent = false) {
   auto running_progress = s_display_progress_done + current_progress;
   auto overall_progress = progress_c{running_progress.done(), s_total_read_count};
 
-  display_progress(overall_progress);
+  auto file_idx  = s_display_files_done + 1;
+  auto num_files = g_files.size();
+
+  auto detail = progress_detail_c::c(file_idx, num_files, current_progress, overall_progress);
+
+  display_progress(detail);
 }
 
 /** \brief Add some tags to the list of all tags

@@ -2324,7 +2324,7 @@ display_playlist_scan_progress(size_t num_scanned,
   if (s_no_progress)
     return;
 
-  display_progress(progress_c::i(num_scanned, total_num_to_scan));
+  display_progress(progress_detail_c::simple(num_scanned, total_num_to_scan));
 }
 
 static filelist_t

@@ -18,8 +18,9 @@
 #include "common/math.h"
 
 class progress_c;
+class progress_detail_c;
 
-void display_progress(progress_c const &current_progress, bool is_100percent = false);
+void display_progress(progress_detail_c const &detail, bool is_100percent = false);
 void display_progress_complete();
 
 class progress_c {
@@ -35,6 +36,7 @@ public:
   enum format_e {
     simple = 0,
     precise,
+    detailed,
   };
 
   static format_e ms_format;
@@ -156,6 +158,52 @@ public:
     double  scale      = 1.0 * file_size / units_per_file;
     int64_t bytes_done = irnd(units_read * scale);
     return progress_c{bytes_done, file_size};
+  }
+};
+
+class progress_detail_c {
+public:
+  int64_t file_index;
+  int64_t num_files;
+
+  progress_c file;
+  progress_c job;
+
+  progress_detail_c()
+    : file_index{0}
+    , num_files{0}
+    , file{progress_c::uninitialized()}
+    , job{progress_c::uninitialized()}
+  {
+  }
+
+  progress_detail_c(int64_t a_file_index, int64_t a_num_files, progress_c a_file, progress_c a_job)
+    : file_index{a_file_index}
+    , num_files{a_num_files}
+    , file{a_file}
+    , job{a_job}
+  {
+  }
+
+  // comparison
+  bool operator ==(progress_detail_c const &other) const {
+    return file_index == other.file_index
+        && num_files  == other.num_files
+        && file       == other.file
+        && job        == other.job;
+  }
+
+  bool operator !=(progress_detail_c const &other) const {
+    return !operator==(other);
+  }
+
+  // construction
+  static progress_detail_c c(int64_t a_file_index, int64_t a_num_files, progress_c a_file, progress_c a_job) {
+    return progress_detail_c{a_file_index, a_num_files, a_file, a_job};
+  }
+
+  static progress_detail_c simple(int64_t num_scanned, int64_t total_num_to_scan) {
+    return progress_detail_c{num_scanned, total_num_to_scan, progress_c::zero(), progress_c{num_scanned, total_num_to_scan}};
   }
 };
 
