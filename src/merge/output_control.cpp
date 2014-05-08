@@ -549,7 +549,7 @@ total_read_count() {
 */
 static void
 compute_display_progress(bool is_100percent = false) {
-  static auto s_no_progress         = debugging_option_c{"no_progress"};
+  static auto    s_no_progress      = debugging_option_c{"no_progress"};
   static int64_t s_total_read_count = total_read_count();
 
   if (s_no_progress)
@@ -563,15 +563,15 @@ compute_display_progress(bool is_100percent = false) {
   if (!s_display_reader)
     s_display_reader = determine_display_reader();
 
-  progress_c current_progress = s_display_reader->get_progress();
+  auto current_progress = s_display_reader->get_progress();
 
   // if (2 < current_progress.pct())
   //   exit(42);
 
-  progress_c running_progress = s_display_progress_done + current_progress;
-  progress_c total_progress = progress_c{running_progress.done(), s_total_read_count};
+  auto running_progress = s_display_progress_done + current_progress;
+  auto overall_progress = progress_c{running_progress.done(), s_total_read_count};
 
-  display_progress(total_progress);
+  display_progress(overall_progress);
 }
 
 /** \brief Add some tags to the list of all tags

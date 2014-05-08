@@ -20,19 +20,25 @@
 progress_format_e g_progress_format = PF_SIMPLE;
 
 static progress_c s_previous_progress;
+static int64_t    s_previous_progress_time = 0;
+
+static inline bool
+should_display_progress(progress_c const &current_progress, int64_t current_time) {
+  return (!s_previous_progress.is_initialized())
+      || ( current_progress.is_complete()           &&  !s_previous_progress.is_complete())
+      || ((current_progress != s_previous_progress) && ((current_time - s_previous_progress_time) >= 500));
+}
 
 static void
-display_progress_output(progress_c const &current_progress) {
-  auto progress = PF_PRECISE == g_progress_format
-                    ? (boost::format("%1%/%2% %3$7.5f") % current_progress.done() % current_progress.total() % current_progress.pct())
-                    : (boost::format("%1$1.0f") % current_progress.pct());
-  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % progress.str() % "\r");
+display_progress_output(progress_c const &progress) {
+  auto format = PF_PRECISE == g_progress_format ? (boost::format("%1%/%2% %3$7.5f") % progress.done() % progress.total() % progress.pct())
+                                                : (boost::format("%1$1.0f") % progress.pct());
+  mxinfo(boost::format(Y("Progress: %1%%%%2%")) % format.str() % "\r");
 }
 
 void
-display_progress(progress_c current_progress, bool is_100percent) {
-  static auto s_no_progress               = debugging_option_c{"no_progress"};
-  static int64_t s_previous_progress_time = 0;
+display_progress(progress_c const &current_progress, bool is_100percent) {
+  static auto s_no_progress = debugging_option_c{"no_progress"};
 
   if (s_no_progress)
     return;
@@ -42,15 +48,9 @@ display_progress(progress_c current_progress, bool is_100percent) {
     return;
   }
 
-  bool is_displayable  = false;
   int64_t current_time = get_current_time_millis();
 
-  if (   (!s_previous_progress.is_initialized())
-      || (current_progress.is_complete() && !s_previous_progress.is_complete())
-      || ((current_progress != s_previous_progress) && ((current_time - s_previous_progress_time) >= 500)))
-    is_displayable = true;
-
-  if (!is_displayable)
+  if (!should_display_progress(current_progress, current_time))
     return;
 
   display_progress_output(current_progress);

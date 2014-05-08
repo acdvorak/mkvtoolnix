@@ -102,12 +102,14 @@ public:
 
   // arithmetic
   progress_c operator +(progress_c const &other) {
-    return progress_c{m_done + other.m_done, m_total + other.m_total, m_is_initialized || other.m_is_initialized};
+    return progress_c{m_done            + other.m_done,
+                      m_total           + other.m_total,
+                      m_is_initialized || other.m_is_initialized};
   }
 
   progress_c operator +=(progress_c const &other) {
-    m_done += other.m_done;
-    m_total += other.m_total;
+    m_done           += other.m_done;
+    m_total          += other.m_total;
     m_is_initialized |= other.m_is_initialized;
     return *this;
   }
