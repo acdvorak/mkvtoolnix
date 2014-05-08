@@ -13,7 +13,6 @@
 
 #include "common/common_pch.h"
 
-#include <boost/lexical_cast.hpp>
 #include <wx/wx.h>
 #include <wx/clipbrd.h>
 #include <wx/file.h>
