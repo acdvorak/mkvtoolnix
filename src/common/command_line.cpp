@@ -212,9 +212,9 @@ handle_common_cli_args(std::vector<std::string> &args,
 
       auto fmt = args[i + 1];
       if (fmt == "simple")
-        g_progress_format = PF_SIMPLE;
+        progress_c::ms_format = progress_c::simple;
       else if (fmt == "precise")
-        g_progress_format = PF_PRECISE;
+        progress_c::ms_format = progress_c::precise;
       else
         mxerror(Y("Invalid argument for '--progress-format'.\n"));
 

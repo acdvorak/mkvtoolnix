@@ -17,7 +17,7 @@
 #include "common/fs_sys_helpers.h"
 #include "common/progress.h"
 
-progress_format_e g_progress_format = PF_SIMPLE;
+progress_c::format_e progress_c::ms_format = progress_c::simple;
 
 static progress_c s_previous_progress;
 static int64_t    s_previous_progress_time = 0;
@@ -31,8 +31,8 @@ should_display_progress(progress_c const &current_progress, int64_t current_time
 
 static void
 display_progress_output(progress_c const &progress) {
-  auto format = PF_PRECISE == g_progress_format ? (boost::format("%1%/%2% %3$7.5f") % progress.done() % progress.total() % progress.pct())
-                                                : (boost::format("%1$1.0f") % progress.pct());
+  auto format = progress_c::precise == progress_c::ms_format ? (boost::format("%1%/%2% %3$7.5f") % progress.done() % progress.total() % progress.pct())
+                                                             : (boost::format("%1$1.0f") % progress.pct());
   mxinfo(boost::format(Y("Progress: %1%%%%2%")) % format.str() % "\r");
 }
 

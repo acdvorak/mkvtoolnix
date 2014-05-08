@@ -17,13 +17,6 @@
 #include "common/common_pch.h"
 #include "common/math.h"
 
-enum progress_format_e {
-  PF_SIMPLE  = 0,
-  PF_PRECISE = 1,
-};
-
-extern progress_format_e g_progress_format;
-
 class progress_c;
 
 void display_progress(progress_c const &current_progress, bool is_100percent = false);
@@ -39,6 +32,13 @@ private:
   bool    m_is_initialized;
 
 public:
+  enum format_e {
+    simple = 0,
+    precise,
+  };
+
+  static format_e ms_format;
+
   // Uninitialized
   progress_c()
     : m_done{}
