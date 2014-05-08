@@ -34,14 +34,16 @@ should_display_progress(progress_detail_c const &current_detail, int64_t current
 static inline boost::format
 get_detailed_format(progress_detail_c const &detail) {
   auto details = std::vector<std::string>{};
-  details.push_back((boost::format("file_idx:%1%")              % detail.file_index)  .str());
-  details.push_back((boost::format("num_files:%1%")             % detail.num_files)   .str());
-  details.push_back((boost::format("file_progress_done:%1%")    % detail.file.done()) .str());
-  details.push_back((boost::format("file_progress_max:%1%")     % detail.file.total()).str());
-  details.push_back((boost::format("file_progress_pct:%1$9.5f") % detail.file.pct())  .str());
-  details.push_back((boost::format("job_progress_done:%1%")     % detail.job.done())  .str());
-  details.push_back((boost::format("job_progress_max:%1%")      % detail.job.total()) .str());
-  details.push_back((boost::format("job_progress_pct:%1$9.5f")  % detail.job.pct())   .str());
+  details.push_back((boost::format("file_idx:%1%")                % detail.file_index)  .str());
+  details.push_back((boost::format("num_files:%1%")               % detail.num_files)   .str());
+  details.push_back((boost::format("file_progress_done:%1%")      % detail.file.done()) .str());
+  details.push_back((boost::format("file_progress_max:%1%")       % detail.file.total()).str());
+  details.push_back((boost::format("file_progress_pct:%1$7.5f%%") % detail.file.pct())  .str());
+  details.push_back((boost::format("job_progress_done:%1%")       % detail.job.done())  .str());
+  details.push_back((boost::format("job_progress_max:%1%")        % detail.job.total()) .str());
+  details.push_back((boost::format("job_progress_pct:%1$7.5f")    % detail.job.pct())   .str());
+  // NOTE: display_progress_output() always appends a trailing '%',
+  // so we must omit it on the last percentage.
   return boost::format("%1%") % boost::algorithm::join(details, " ");
 }
 
