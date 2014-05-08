@@ -153,7 +153,7 @@ public:
   }
 
   static progress_c scale(int64_t file_size, int64_t units_read, int64_t units_per_file) {
-    double scale = 1.0 * file_size / units_per_file;
+    double  scale      = 1.0 * file_size / units_per_file;
     int64_t bytes_done = irnd(units_read * scale);
     return progress_c{bytes_done, file_size};
   }
