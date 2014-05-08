@@ -9,7 +9,7 @@
 
    \file
 
-   \author Written by Andrew C. Dvorak <andy@andydvorak.net>.
+   \author Written by Andrew C. Dvorak <acdvorak@gmail.com>.
 */
 
 #include "common/common_pch.h"

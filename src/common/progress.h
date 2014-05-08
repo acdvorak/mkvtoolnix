@@ -8,7 +8,7 @@
 
    class definition and output handling for progress information
 
-   Written by Andrew C. Dvorak <andy@andydvorak.net>.
+   Written by Andrew C. Dvorak <acdvorak@gmail.com>.
 */
 
 #ifndef MTX_PROGRESS_H
