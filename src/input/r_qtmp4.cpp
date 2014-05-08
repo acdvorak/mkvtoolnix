@@ -1541,7 +1541,7 @@ qtmp4_reader_c::get_progress() {
   qtmp4_demuxer_cptr &dmx = m_demuxers[m_main_dmx];
   unsigned int max_chunks = (0 == dmx->sample_size) ? dmx->sample_table.size() : dmx->chunk_table.size();
 
-  return progress_c::scale(m_size, dmx->pos, max_chunks);
+  return s_previous_progress = progress_c::scale(m_size, dmx->pos, max_chunks);
 }
 
 void
