@@ -539,10 +539,10 @@ determine_display_reader() {
 
 static progress_c
 sum_progress() {
-  progress_c p;
+  progress_c sum;
   for (auto &current : g_files)
-    p += current.reader->get_progress();
-  return p;
+    sum += current.reader->get_progress();
+  return sum;
 }
 
 /** \brief Selects a reader for displaying its progress information
