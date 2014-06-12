@@ -537,20 +537,19 @@ determine_display_reader() {
   return winner->reader;
 }
 
-static int64_t
-total_read_count() {
-  int64_t b = 0;
+static progress_c
+sum_progress() {
+  progress_c p;
   for (auto &current : g_files)
-    b += current.reader->get_progress().total();
-  return b;
+    p += current.reader->get_progress();
+  return p;
 }
 
 /** \brief Selects a reader for displaying its progress information
 */
 static void
 compute_display_progress(bool is_100percent = false) {
-  static auto    s_no_progress      = debugging_option_c{"no_progress"};
-  static int64_t s_total_read_count = total_read_count();
+  static auto s_no_progress = debugging_option_c{"no_progress"};
 
   if (s_no_progress)
     return;
@@ -568,8 +567,7 @@ compute_display_progress(bool is_100percent = false) {
   // if (2 < current_progress.pct())
   //   exit(42);
 
-  auto running_progress = s_display_progress_done + current_progress;
-  auto overall_progress = progress_c{running_progress.done(), s_total_read_count};
+  auto overall_progress = sum_progress();
 
   auto file_idx  = s_display_files_done + 1;
   auto num_files = g_files.size();
