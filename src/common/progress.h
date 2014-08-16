@@ -36,7 +36,6 @@ public:
   enum format_e {
     simple = 0,
     precise,
-    detailed,
   };
 
   static format_e ms_format;
