@@ -110,6 +110,8 @@ set_usage() {
   usage_text += Y("  --disable-lacing         Do not Use lacing.\n");
   usage_text += Y("  --enable-durations       Enable block durations for all blocks.\n");
   usage_text += Y("  --timecode-scale <n>     Force the timecode scale factor to n.\n");
+  usage_text += Y("  --disable-track-statistics-tags\n"
+                  "                           Do not write tags with track statistics.\n");
   usage_text +=   "\n";
   usage_text += Y(" File splitting, linking, appending and concatenating (more global options):\n");
   usage_text += Y("  --split <d[K,M,G]|HH:MM:SS|s>\n"
@@ -1950,6 +1952,9 @@ parse_args(std::vector<std::string> args) {
     else if (this_arg == "--enable-durations")
       g_use_durations = true;
 
+    else if (this_arg == "--disable-track-statistics-tags")
+      g_no_track_statistics_tags = true;
+
     else if (this_arg == "--attachment-description") {
       if (no_next_arg)
         mxerror(Y("'--attachment-description' lacks the description.\n"));
@@ -2513,5 +2518,5 @@ main(int argc,
 
   cleanup();
 
-  mxexit();
+  mxexit(0);
 }

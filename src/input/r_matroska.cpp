@@ -172,6 +172,30 @@ kax_track_t::fix_display_dimension_parameters() {
   }
 }
 
+void
+kax_track_t::add_track_tags_to_identification(std::vector<std::string> &verbose_info) {
+  if (!tags)
+    return;
+
+  for (auto const &tag_elt : *tags) {
+    auto tag = dynamic_cast<KaxTag *>(tag_elt);
+    if (!tag)
+      continue;
+
+    for (auto const &simple_tag_elt : *tag) {
+      auto simple_tag = dynamic_cast<KaxTagSimple *>(simple_tag_elt);
+      if (!simple_tag)
+        continue;
+
+      auto name  = mtx::tags::get_simple_name(*simple_tag);
+      auto value = mtx::tags::get_simple_value(*simple_tag);
+
+      if (!name.empty())
+        verbose_info.emplace_back((boost::format("tag_%1%:%2%") % balg::to_lower_copy(name) % escape(value)).str());
+    }
+  }
+}
+
 /*
    Probes a file by simply comparing the first four bytes to the EBML
    head signature.
@@ -948,8 +972,11 @@ kax_reader_c::read_headers_tracks(mm_io_c *io,
 
     auto ktuid = FindChild<KaxTrackUID>(ktentry);
     if (!ktuid)
-      mxerror(Y("matroska_reader: A track is missing its track UID.\n"));
-    track->track_uid = ktuid->GetValue();
+      mxwarn_fn(m_ti.m_fname,
+                boost::format(Y("Track %1% is missing its track UID element which is required to be present by the Matroska specification. If the file contains tags then those tags might be broken.\n"))
+                % track->tnum);
+    else
+      track->track_uid = ktuid->GetValue();
 
     auto kttype = FindChild<KaxTrackType>(ktentry);
     if (!kttype)
@@ -2185,7 +2212,8 @@ kax_reader_c::identify() {
     verbose_info.clear();
 
     verbose_info.push_back((boost::format("number:%1%") % track->track_number).str());
-    verbose_info.push_back((boost::format("uid:%1%") % track->track_uid).str());
+    if (track->track_uid)
+      verbose_info.push_back((boost::format("uid:%1%") % track->track_uid).str());
     verbose_info.push_back((boost::format("codec_id:%1%") % escape(track->codec_id)).str());
     verbose_info.push_back((boost::format("codec_private_length:%1%") % track->private_size).str());
 
@@ -2242,6 +2270,8 @@ kax_reader_c::identify() {
     else
       info = track->codec_id;
 
+    track->add_track_tags_to_identification(verbose_info);
+
     id_result_track(track->tnum,
                       track->type == 'v' ? ID_RESULT_TRACK_VIDEO
                     : track->type == 'a' ? ID_RESULT_TRACK_AUDIO
@@ -2252,17 +2282,17 @@ kax_reader_c::identify() {
   }
 
   for (auto &attachment : g_attachments)
-    id_result_attachment(attachment.ui_id, attachment.mime_type, attachment.data->get_size(), attachment.name, attachment.description);
+    id_result_attachment(attachment.ui_id, attachment.mime_type, attachment.data->get_size(), attachment.name, attachment.description, attachment.id);
 
   if (m_chapters)
     id_result_chapters(count_chapter_atoms(*m_chapters));
 
   if (m_tags)
-    id_result_tags(ID_RESULT_GLOBAL_TAGS_ID, count_simple_tags(*m_tags));
+    id_result_tags(ID_RESULT_GLOBAL_TAGS_ID, mtx::tags::count_simple(*m_tags));
 
   for (auto &track : m_tracks)
     if (track->ok && track->tags)
-      id_result_tags(track->tnum, count_simple_tags(*track->tags));
+      id_result_tags(track->tnum, mtx::tags::count_simple(*track->tags));
 }
 
 void

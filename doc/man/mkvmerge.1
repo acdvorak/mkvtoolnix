@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 2014-04-18
+.\"      Date: 2014-07-27
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 6.9.1
+.\"    Source: MKVToolNix 7.1.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2014\-04\-18" "MKVToolNix 6\&.9\&.1" "User Commands"
+.TH "MKVMERGE" "1" "2014\-07\-27" "MKVToolNix 7\&.1\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -78,7 +78,7 @@ option for details\&.
 .PP
 \fB\-w\fR, \fB\-\-webm\fR
 .RS 4
-Create a WebM compliant file\&. This is also turned on if the output file name\*(Aqs extension is "webm"\&. This mode enforces several restrictions\&. The only allowed codecs are VP8 video and Vorbis audio tracks\&. Neither chapters nor tags are allowed\&. The DocType header item is changed to "webm"\&.
+Create a WebM compliant file\&. This is also turned on if the output file name\*(Aqs extension is "webm"\&. This mode enforces several restrictions\&. The only allowed codecs are VP8, VP9 video and Opus, Vorbis audio tracks\&. Neither chapters nor tags are allowed\&. The DocType header item is changed to "webm"\&.
 .RE
 .PP
 \fB\-\-title\fR \fItitle\fR
@@ -294,6 +294,22 @@ Disables lacing for all tracks\&. This will increase the file\*(Aqs size, especi
 \fB\-\-enable\-durations\fR
 .RS 4
 Write durations for all blocks\&. This will increase file size and does not offer any additional value for players at the moment\&.
+.RE
+.PP
+\fB\-\-disable\-track\-statistics\-tags\fR
+.RS 4
+Normally
+\fBmkvmerge\fR(1)
+will write certain tags with statistics for each track\&. If such tags are already present then they will be overwritten\&. The tags are
+\fBBPS\fR,
+\fBDURATION\fR,
+\fBNUMBER_OF_BYTES\fR
+and
+\fBNUMBER_OF_FRAMES\fR\&.
+.sp
+Enabling this option prevents
+\fBmkvmerge\fR(1)
+from writing those tags and from touching any existing tags with same names\&.
 .RE
 .PP
 \fB\-\-timecode\-scale\fR \fIfactor\fR

@@ -30,6 +30,7 @@
 #include <windows.h>
 #endif
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <iostream>
 #include <typeinfo>
 
@@ -60,6 +61,7 @@
 #include <matroska/KaxVersion.h>
 
 #include "common/chapters/chapters.h"
+#include "common/date_time.h"
 #include "common/debugging.h"
 #include "common/ebml.h"
 #include "common/fs_sys_helpers.h"
@@ -153,6 +155,7 @@ bool g_write_meta_seek_for_clusters         = false;
 bool g_no_lacing                            = false;
 bool g_no_linking                           = true;
 bool g_use_durations                        = false;
+bool g_no_track_statistics_tags             = false;
 
 double g_timecode_scale                     = TIMECODE_SCALE;
 timecode_scale_mode_e g_timecode_scale_mode = TIMECODE_SCALE_MODE_NORMAL;
@@ -228,6 +231,9 @@ static generic_reader_c *s_display_reader = nullptr;
 static progress_c s_display_progress_done;
 
 static EbmlHead *s_head                   = nullptr;
+
+static std::string s_muxing_app, s_writing_app;
+static boost::posix_time::ptime s_writing_date;
 
 /** \brief Add a segment family UID to the list if it doesn't exist already.
 
@@ -351,6 +357,36 @@ open_playlist_file(filelist_t &file,
   return true;
 }
 
+static file_type_e
+detect_text_file_formats(filelist_t const &file) {
+  auto text_io = mm_text_io_cptr{};
+  try {
+    text_io        = std::make_shared<mm_text_io_c>(new mm_file_io_c(file.name));
+    auto text_size = text_io->get_size();
+
+    if (srt_reader_c::probe_file(text_io.get(), text_size))
+      return FILE_TYPE_SRT;
+    else if (ssa_reader_c::probe_file(text_io.get(), text_size))
+      return FILE_TYPE_SSA;
+    else if (vobsub_reader_c::probe_file(text_io.get(), text_size))
+      return FILE_TYPE_VOBSUB;
+    else if (usf_reader_c::probe_file(text_io.get(), text_size))
+      return FILE_TYPE_USF;
+
+    // Unsupported text subtitle formats
+    else if (microdvd_reader_c::probe_file(text_io.get(), text_size))
+      return FILE_TYPE_MICRODVD;
+
+  } catch (mtx::mm_io::exception &ex) {
+    mxerror(boost::format(Y("The file '%1%' could not be opened for reading: %2%.\n")) % file.name % ex);
+
+  } catch (...) {
+    mxerror(boost::format(Y("The source file '%1%' could not be opened successfully, or retrieving its size by seeking to the end did not work.\n")) % file.name);
+  }
+
+  return FILE_TYPE_IS_UNKNOWN;
+}
+
 /** \brief Probe the file type
 
    Opens the input file and calls the \c probe_file function for each known
@@ -368,35 +404,6 @@ get_file_type_internal(filelist_t &file) {
 
   file_type_e type = FILE_TYPE_IS_UNKNOWN;
 
-  // All text file types (subtitles).
-  auto text_io = mm_text_io_cptr{};
-  try {
-    text_io        = std::make_shared<mm_text_io_c>(new mm_file_io_c(file.name));
-    auto text_size = text_io->get_size();
-
-    if (srt_reader_c::probe_file(text_io.get(), text_size))
-      type = FILE_TYPE_SRT;
-    else if (ssa_reader_c::probe_file(text_io.get(), text_size))
-      type = FILE_TYPE_SSA;
-    else if (vobsub_reader_c::probe_file(text_io.get(), text_size))
-      type = FILE_TYPE_VOBSUB;
-    else if (usf_reader_c::probe_file(text_io.get(), text_size))
-      type = FILE_TYPE_USF;
-
-    // Unsupported text subtitle formats
-    else if (microdvd_reader_c::probe_file(text_io.get(), text_size))
-      type = FILE_TYPE_MICRODVD;
-
-    if (type != FILE_TYPE_IS_UNKNOWN)
-      return std::make_pair(type, text_size);
-
-  } catch (mtx::mm_io::exception &ex) {
-    mxerror(boost::format(Y("The file '%1%' could not be opened for reading: %2%.\n")) % file.name % ex);
-
-  } catch (...) {
-    mxerror(boost::format(Y("The source file '%1%' could not be opened successfully, or retrieving its size by seeking to the end did not work.\n")) % file.name);
-  }
-
   // File types that can be detected unambiguously but are not supported
   if (aac_adif_reader_c::probe_file(io, size))
     type = FILE_TYPE_AAC;
@@ -408,6 +415,7 @@ get_file_type_internal(filelist_t &file) {
     type = FILE_TYPE_FLV;
   else if (hdsub_reader_c::probe_file(io, size))
     type = FILE_TYPE_HDSUB;
+
   // File types that can be detected unambiguously
   else if (avi_reader_c::probe_file(io, size))
     type = FILE_TYPE_AVI;
@@ -437,6 +445,13 @@ get_file_type_internal(filelist_t &file) {
     type = FILE_TYPE_COREAUDIO;
   else if (dirac_es_reader_c::probe_file(io, size))
     type = FILE_TYPE_DIRAC;
+
+  // All text file types (subtitles).
+  else
+    type = detect_text_file_formats(file);
+
+  if (FILE_TYPE_IS_UNKNOWN != type)
+    ;                           // intentional fall-through
   // File types that are misdetected sometimes and that aren't supported
   else if (dv_reader_c::probe_file(io, size))
     type = FILE_TYPE_DV;
@@ -729,16 +744,21 @@ render_headers(mm_io_c *out) {
     s_kax_duration->SetValue(0.0);
     s_kax_infos->PushElement(*s_kax_duration);
 
-    if (!hack_engaged(ENGAGE_NO_VARIABLE_DATA)) {
-      GetChild<KaxMuxingApp >(s_kax_infos).SetValue(cstrutf8_to_UTFstring(std::string("libebml v") + EbmlCodeVersion + std::string(" + libmatroska v") + KaxCodeVersion));
-      GetChild<KaxWritingApp>(s_kax_infos).SetValue(cstrutf8_to_UTFstring(get_version_info("mkvmerge", static_cast<version_info_flags_e>(vif_full | vif_untranslated))));
-      GetChild<KaxDateUTC   >(s_kax_infos).SetEpochDate(time(nullptr));
+    if (s_muxing_app.empty()) {
+      if (!hack_engaged(ENGAGE_NO_VARIABLE_DATA)) {
+        s_muxing_app   = std::string("libebml v") + EbmlCodeVersion + std::string(" + libmatroska v") + KaxCodeVersion;
+        s_writing_app  = get_version_info("mkvmerge", static_cast<version_info_flags_e>(vif_full | vif_untranslated));
+        s_writing_date = boost::posix_time::second_clock::universal_time();
 
-    } else {
-      GetChild<KaxMuxingApp >(s_kax_infos).SetValue(cstrutf8_to_UTFstring("no_variable_data"));
-      GetChild<KaxWritingApp>(s_kax_infos).SetValue(cstrutf8_to_UTFstring("no_variable_data"));
-      GetChild<KaxDateUTC   >(s_kax_infos).SetEpochDate(0);
+      } else {
+        s_muxing_app   = "no_variable_data";
+        s_writing_app  = "no_variable_data";
+      }
     }
+
+    GetChild<KaxMuxingApp >(s_kax_infos).SetValue(cstrutf8_to_UTFstring(s_muxing_app));
+    GetChild<KaxWritingApp>(s_kax_infos).SetValue(cstrutf8_to_UTFstring(s_writing_app));
+    GetChild<KaxDateUTC   >(s_kax_infos).SetEpochDate(s_writing_date.is_not_a_date_time() ? 0 : mtx::date_time::to_time_t(s_writing_date));
 
     if (!g_segment_title.empty())
       GetChild<KaxTitle>(s_kax_infos).SetValue(cstrutf8_to_UTFstring(g_segment_title.c_str()));
@@ -1612,7 +1632,7 @@ prepare_tags_for_rendering() {
     return;
   }
 
-  fix_mandatory_tag_elements(s_kax_tags);
+  mtx::tags::fix_mandatory_elements(s_kax_tags);
   sort_ebml_master(s_kax_tags);
   if (!s_kax_tags->CheckMandatory())
     mxerror(boost::format(Y("Some tag elements are missing (this error should not have occured - another similar error should have occured earlier). %1%\n")) % BUGMSG);
@@ -1712,6 +1732,19 @@ render_chapters() {
 
   delete s_kax_chapters_void;
   s_kax_chapters_void = nullptr;
+}
+
+static KaxTags *
+set_track_statistics_tags(KaxTags *tags) {
+  if (g_no_track_statistics_tags || outputting_webm())
+    return tags;
+
+  if (!tags)
+    tags = new KaxTags;
+
+  g_cluster_helper->create_tags_for_track_statistics(*tags, s_writing_app, s_writing_date);
+
+  return tags;
 }
 
 /** \brief Finishes and closes the current file
@@ -1816,24 +1849,29 @@ finish_file(bool last_file,
     g_kax_sh_main->IndexThis(*g_kax_sh_cues, *g_kax_segment);
   }
 
-  // Render the tags if we have any.
+  // Set the tags for track statistics and render all tags for this
+  // file.
   KaxTags *tags_here = nullptr;
   if (s_kax_tags) {
     if (!s_chapters_in_this_file) {
       KaxChapters temp_chapters;
-      tags_here = select_tags_for_chapters(*s_kax_tags, temp_chapters);
+      tags_here = mtx::tags::select_for_chapters(*s_kax_tags, temp_chapters);
     } else
-      tags_here = select_tags_for_chapters(*s_kax_tags, *s_chapters_in_this_file);
+      tags_here = mtx::tags::select_for_chapters(*s_kax_tags, *s_chapters_in_this_file);
+  }
 
-    if (tags_here) {
-      fix_mandatory_tag_elements(tags_here);
-      tags_here->UpdateSize();
-      tags_here->Render(*s_out, true);
-    }
+  tags_here = set_track_statistics_tags(tags_here);
 
+  if (tags_here && (0 == mtx::tags::count_simple(*tags_here))) {
+    delete tags_here;
+    tags_here = nullptr;
   }
 
   if (tags_here) {
+    mtx::tags::fix_mandatory_elements(tags_here);
+    tags_here->UpdateSize();
+    tags_here->Render(*s_out, true);
+
     g_kax_sh_main->IndexThis(*tags_here, *g_kax_segment);
     delete tags_here;
   }

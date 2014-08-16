@@ -1,3 +1,128 @@
+2014-08-09  Moritz Bunkus  <moritz@bunkus.org>
+
+        * source: Fixed compilation with Boost 1.56.0 which changed the
+        »indexed« range adaptor in an incompatible way.
+
+        * mkvpropedit, mmg's header editor: bug fix: when editing files
+        with missing track UID elements such an element will be generated
+        automatically instead of crashing and leaving the file in an
+        unplayable state. Part of a fix for #1050.
+
+        * mkvmerge: bug fix: Reading Matroska files with missing track UID
+        elements will no longer cause mkvmerge to abort with an error. A
+        warning is printed and a new unique track ID generated
+        instead. Part of a fix for #1050.
+
+2014-07-27  Moritz Bunkus  <moritz@bunkus.org>
+
+        * Released v7.1.0.
+
+        * all: bug fix: Fixed file seeking code for »seek relative to end
+        of file« case. Fixes #1035.
+
+        * mmg: bug fix: Selecting the root of the chapter editor tree will
+        disable the language/country inputs properly as changing those
+        fields doesn't make sense for the root.
+
+2014-07-26  Moritz Bunkus  <moritz@bunkus.org>
+
+        * all: bug fix: if MKVToolNix on Windows is residing in a
+        directory containing non-ASCII characters then translations
+        weren't found. This has only been fixed for cases where those
+        non-ASCII characters are part of the system's active code page.
+
+2014-07-10  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: bug fix: track statistics tags are not written for
+        WebM files anymore as the WebM specification doesn't allow tags.
+
+2014-07-01  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: bug fix: Fixed wrong default duration for PCM audio
+        tracks if the source file provides timecodes for that track. Fixes
+        #1001 and #1033.
+
+2014-06-18  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: enhancement: SSA/ASS: in addition to semicolons
+        comments can now start with exclamation marks, too.
+
+2014-06-11  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvextract: bug fix: Fixed a crash when opening damaged/invalid
+        Matroska files in all extraction modes. Fixes #1027.
+
+2014-06-09  Moritz Bunkus  <moritz@bunkus.org>
+
+        * Released v7.0.0.
+
+2014-05-26  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: enhancement: In addition to the track statistics tags
+        »BPS«, »DURATION«, »NUMBER_OF_BYTES« and »NUMBER_OF_FRAMES«
+        mkvmerge will write two more tags identifying which application
+        wrote the statistics (»_STATISTICS_WRITING_APP«) and when the file
+        in question was written: »_STATISTICS_WRITING_DATE_UTC«.
+        »_STATISTICS_WRITING_APP« will always contain the same string
+        contained in the segment info header element »WritingApp«.
+        »_STATISTICS_WRITING_DATE_UTC« will contain the same timestamp as
+        in the segment info header element »Date«, though
+        »_STATISTICS_WRITING_DATE_UTC« is actually a string representation
+        instead of an integer value.
+
+        Additionally a tag named »_STATISTICS_TAGS« is written containing
+        the names of the tags that mkvmerge has set automatically. It
+        equals the following currently: »BPS DURATION NUMBER_OF_BYTES
+        NUMBER_OF_FRAMES«.
+
+        * build system: Boost's "date/time" library is now required.
+
+2014-05-25  John Peebles  <johnpeeb@gmail.com>
+
+        * mkvmerge: bug fix: If a single subtitle track contains two or
+        more entries at the same timecode then the cue duration and cue
+        relative position elements written were wrong.
+
+2014-05-24  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvinfo: bug fix: fixed wrong progress percentage shown during
+        saving the information to text files. Fixes #1016.
+
+        * mkvmerge: new feature: Added a global option for disabling
+        writing the tags with statistics for each track:
+        --disable-track-specific-tags.
+
+2014-05-20  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: new feature: When identifying a Matroska file in
+        verbose identification mode track-specific tags will be output as
+        well. The format is »tag_<tag name in lower case>:<tag value>»,
+        e.g. for a tag named »BPS« with the value »224000« the output
+        would be »tag_bps:224000«. Enhancement for #1021.
+
+        * mkvmerge: new feature: mkvmerge will write track-specific tags
+        with statistics (»BPS« for the average number of bits per second,
+        »DURATION« for the duration, »NUMBER_OF_BYTES« and
+        »NUMBER_OF_FRAMES« for the track's size in bytes and its number of
+        frames/packets). Implements #1021.
+
+2014-05-18  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: bug fix: Changed the file type detection order
+        again. The text subtitle formats are now probed after those binary
+        formats that can be detected quickly and unambiguously. This
+        avoids some mis-detection if e.g. Matroska files as ASS text
+        subtitles if they do contain such a track.
+
+        * mmg: enhancement: The chapter editor will only use fast-mode
+        parsing when loading chapters from Matroska files.
+
+2014-05-14  Moritz Bunkus  <moritz@bunkus.org>
+
+        * all: bug fix: fixed invalid memory access in the cleanup
+        procedures which only occurred if the output was redirected with
+        the »--redirect-output« command line parameter.
+
 2014-05-06  Andrew Dvorak  <acdvorak@gmail.com>
 
         * mkvmerge, mkvextract: new feature: Added "--progress-format" option
@@ -6,6 +131,15 @@
 
         * mkvmerge, mkvextract, mmg: enhancement: Smoother, more accurate, and
         more frequent progress updates.
+
+2014-05-04  Moritz Bunkus  <moritz@bunkus.org>
+
+        * mkvmerge: enhancement: The last chapter entry read from MPLS
+        files is removed if it is at most five seconds long. Patch by
+        Andrew Dvorak (see AUTHORS).
+
+        * mkvmerge: enhancement: added the attachment UID to the verbose
+        identification output of Matroska files.
 
 2014-04-21  Moritz Bunkus  <moritz@bunkus.org>
 

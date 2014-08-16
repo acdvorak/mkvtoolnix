@@ -3,8 +3,8 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"
 [
 <!ENTITY product "mkvmerge">
-<!ENTITY version "6.9.1">
-<!ENTITY date "2014-04-18">
+<!ENTITY version "7.1.0">
+<!ENTITY date "2014-07-27">
 
 <!ENTITY mkvmerge "<citerefentry><refentrytitle>mkvmerge</refentrytitle><manvolnum>1</manvolnum></citerefentry>">
 <!ENTITY mkvinfo "<citerefentry><refentrytitle>mkvinfo</refentrytitle><manvolnum>1</manvolnum></citerefentry>">
@@ -104,8 +104,8 @@
     <varlistentry>
      <term><option>-w</option>, <option>--webm</option></term>
      <listitem>
-      <para>Create a WebM compliant file. This is also turned on if the output file name's extension is &quot;webm&quot;. This mode
-      enforces several restrictions. The only allowed codecs are VP8 video and Vorbis audio tracks. Neither chapters nor tags are
+      <para>Create a WebM compliant file. This is also turned on if the output file name's extension is &quot;webm&quot;. This mode enforces
+      several restrictions. The only allowed codecs are VP8, VP9 video and Opus, Vorbis audio tracks. Neither chapters nor tags are
       allowed. The DocType header item is changed to &quot;webm&quot;.
       </para>
      </listitem>
@@ -343,6 +343,21 @@
      <listitem>
       <para>
        Write durations for all blocks. This will increase file size and does not offer any additional value for players at the moment.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>--disable-track-statistics-tags</option></term>
+     <listitem>
+      <para>
+       Normally &mkvmerge; will write certain tags with statistics for each track. If such tags are already present then they will be
+       overwritten. The tags are <constant>BPS</constant>, <constant>DURATION</constant>, <constant>NUMBER_OF_BYTES</constant> and
+       <constant>NUMBER_OF_FRAMES</constant>.
+      </para>
+
+      <para>
+       Enabling this option prevents &mkvmerge; from writing those tags and from touching any existing tags with same names.
       </para>
      </listitem>
     </varlistentry>

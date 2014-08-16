@@ -261,16 +261,16 @@ generic_packetizer_c::set_tag_track_uid() {
   if (!m_ti.m_tags)
     return;
 
-  convert_old_tags(*m_ti.m_tags);
+  mtx::tags::convert_old(*m_ti.m_tags);
   size_t idx_tags;
   for (idx_tags = 0; m_ti.m_tags->ListSize() > idx_tags; ++idx_tags) {
     KaxTag *tag = (KaxTag *)(*m_ti.m_tags)[idx_tags];
 
-    remove_track_uid_tag_targets(tag);
+    mtx::tags::remove_track_uid_targets(tag);
 
     GetChild<KaxTagTrackUID>(GetChild<KaxTagTargets>(tag)).SetValue(m_huid);
 
-    fix_mandatory_tag_elements(tag);
+    mtx::tags::fix_mandatory_elements(tag);
 
     if (!tag->CheckMandatory())
       mxerror(boost::format(Y("The tags in '%1%' could not be parsed: some mandatory elements are missing.\n"))
@@ -1467,8 +1467,11 @@ generic_reader_c::id_result_attachment(int64_t attachment_id,
                                        const std::string &type,
                                        int size,
                                        const std::string &file_name,
-                                       const std::string &description) {
+                                       const std::string &description,
+                                       boost::optional<uint64_t> id) {
   id_result_t result(attachment_id, type, file_name, description, size);
+  if (id)
+    result.verbose_info.push_back((boost::format("uid:%1%") % *id).str());
   m_id_results_attachments.push_back(result);
 }
 
@@ -1534,6 +1537,9 @@ generic_reader_c::display_identification_results() {
 
     if (!result.info.empty())
       mxinfo(boost::format(format_att_file_name) % id_escape_string(result.info));
+
+    if (g_identify_verbose && !result.verbose_info.empty())
+      mxinfo(boost::format(" [%1%]") % join(" ", result.verbose_info));
 
     mxinfo("\n");
   }
@@ -1673,7 +1679,7 @@ track_info_c::operator =(const track_info_c &src) {
 
   m_all_tags                   = src.m_all_tags;
   m_tags_file_name             = src.m_tags_file_name;
-  m_tags                       = src.m_tags ? clone(src.m_tags) : kax_tags_cptr{};
+  m_tags                       = src.m_tags ? clone(src.m_tags) : std::shared_ptr<KaxTags>{};
 
   m_all_aac_is_sbr             = src.m_all_aac_is_sbr;
 
