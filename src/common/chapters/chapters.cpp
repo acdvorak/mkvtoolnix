@@ -56,6 +56,20 @@ simple_chapter_error(const boost::format &format) {
   simple_chapter_error(format.str());
 }
 
+/** \brief Throw a special chapter parser exception.
+
+   \param error The error message.
+*/
+inline void
+mpls_chapter_error(const std::string &error) {
+  throw mtx::chapter_parser_x(boost::format(Y("MPLS chapter parser: %1%\n")) % error);
+}
+
+inline void
+mpls_chapter_error(const boost::format &format) {
+  mpls_chapter_error(format.str());
+}
+
 /** \brief Reads the start of a file and checks for OGM style comments.
 
    The first lines are read. OGM style comments are recognized if the first
@@ -283,7 +297,7 @@ parse_mpls_chapters(mm_text_io_c *in,
 
   auto mpls = mtx::mpls::parser_c{};
   if (!mpls.parse(in))
-    simple_chapter_error(boost::format(Y("Not a valid MPLS playlist file.")));
+    mpls_chapter_error(boost::format(Y("Not a valid MPLS playlist file.")));
 
   kax_chapters_cptr chaps{new KaxChapters};
   KaxChapterAtom *atom     = nullptr;
