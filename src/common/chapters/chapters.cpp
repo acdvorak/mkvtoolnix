@@ -25,6 +25,7 @@
 #include "common/locale.h"
 #include "common/mm_io.h"
 #include "common/mm_io_x.h"
+#include "common/mpls.h"
 #include "common/strings/editing.h"
 #include "common/strings/parsing.h"
 #include "common/unique_numbers.h"
@@ -234,6 +235,99 @@ parse_simple_chapters(mm_text_io_c *in,
   return 0 == num ? kax_chapters_cptr{} : chaps;
 }
 
+/** \brief Reads and parses a file to determine if it is a Blu-ray playlist.
+
+   The entire file is read and parsed.  The file is considered to be a valid
+   MPLS playlist if the parser completes successfully without error.
+
+   \param in The file to read from.
+
+   \return \c true if the file is a valid, well-formed MPLS playlist and
+     \c false otherwise.
+*/
+bool
+probe_mpls_chapters(mm_text_io_c *in) {
+  auto mpls = mtx::mpls::parser_c{};
+  return mpls.parse(in);
+}
+
+/** \brief Parse a Blu-ray MPLS playlist file.
+
+   The file \a in is read. The content is assumed to be an MPLS playlist.
+
+   The parameters are checked for validity.
+
+   \param in The MPLS file to read from.
+   \param min_tc An optional timecode. If both \a min_tc and \a max_tc are
+     given then only those chapters that lie in the timerange
+     <tt>[min_tc..max_tc]</tt> are kept.
+   \param max_tc An optional timecode. If both \a min_tc and \a max_tc are
+     given then only those chapters that lie in the timerange
+     <tt>[min_tc..max_tc]</tt> are kept.
+   \param offset An optional offset that is subtracted from all start and
+     end timecodes after the timerange check has been made.
+   \param language This language is added as the \c KaxChapterLanguage
+     for all entries.
+
+   \return The chapters parsed from the file or \c nullptr if an error occured.
+*/
+kax_chapters_cptr
+parse_mpls_chapters(mm_text_io_c *in,
+                    int64_t min_tc,
+                    int64_t max_tc,
+                    int64_t offset,
+                    const std::string &language) {
+  assert(in);
+
+  in->setFilePointer(0);
+
+  auto mpls = mtx::mpls::parser_c{};
+  if (!mpls.parse(in))
+    chapter_error(boost::format(Y("Not a valid MPLS playlist file.")));
+
+  kax_chapters_cptr chaps{new KaxChapters};
+  KaxChapterAtom *atom     = nullptr;
+  KaxEditionEntry *edition = nullptr;
+  int num                  = 0;
+  auto tcs                 = mpls.get_chapters();
+
+  // The core now uses ns precision timecodes.
+  if (0 < min_tc)
+    min_tc /= 1000000;
+  if (0 < max_tc)
+    max_tc /= 1000000;
+  if (0 < offset)
+    offset /= 1000000;
+
+  std::string use_language =
+      !language.empty()                   ? language
+    : !g_default_chapter_language.empty() ? g_default_chapter_language
+    :                                       "eng";
+
+  for (auto tc = tcs.begin(), end = tcs.end(); tc != end; tc++) {
+    if (!edition)
+      edition = &GetChild<KaxEditionEntry>(*chaps);
+
+    atom = &GetFirstOrNextChild<KaxChapterAtom>(*edition, atom);
+    GetChild<KaxChapterUID>(*atom).SetValue(create_unique_number(UNIQUE_CHAPTER_IDS));
+    GetChild<KaxChapterTimeStart>(*atom).SetValue(tc->to_ns());
+
+    auto &display = GetChild<KaxChapterDisplay>(*atom);
+
+    std::string name = "Chapter";
+
+    GetChild<KaxChapterString>(display).SetValue(cstrutf8_to_UTFstring(name));
+    GetChild<KaxChapterLanguage>(display).SetValue(use_language);
+
+    if (!g_default_chapter_country.empty())
+      GetChild<KaxChapterCountry>(display).SetValue(g_default_chapter_country);
+
+    ++num;
+  }
+
+  return 0 == num ? kax_chapters_cptr{} : chaps;
+}
+
 /** \brief Probe a file for different chapter formats and parse the file.
 
    The file \a file_name is opened and checked for supported chapter formats.
@@ -300,8 +394,8 @@ parse_chapters(const std::string &file_name,
 /** \brief Probe a file for different chapter formats and parse the file.
 
    The file \a in is checked for supported chapter formats. These include
-   simple OGM style chapters, CUE sheets and mkvtoolnix' own XML chapter
-   format.
+   simple OGM style chapters, CUE sheets, Blu-ray MPLS playlists, and
+   mkvtoolnix's own XML chapter format.
 
    The parameters are checked for validity.
 
@@ -355,6 +449,11 @@ parse_chapters(mm_text_io_c *in,
       if (is_simple_format)
         *is_simple_format = true;
       return parse_cue_chapters(in, min_tc, max_tc, offset, language, charset, tags);
+
+    } else if (probe_mpls_chapters(in)) {
+      if (is_simple_format)
+        *is_simple_format = false;
+      return parse_mpls_chapters(in, min_tc, max_tc, offset, language);
 
     } else if (is_simple_format)
       *is_simple_format = false;

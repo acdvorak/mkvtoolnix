@@ -63,6 +63,9 @@ parse_chapters(mm_text_io_c *io, int64_t min_tc = 0, int64_t max_tc = -1, int64_
 bool probe_simple_chapters(mm_text_io_c *in);
 kax_chapters_cptr parse_simple_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, const std::string &language, const std::string &charset);
 
+bool probe_mpls_chapters(mm_text_io_c *in);
+kax_chapters_cptr parse_mpls_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, const std::string &language, const std::string &charset);
+
 extern std::string g_cue_to_chapter_name_format;
 bool probe_cue_chapters(mm_text_io_c *in);
 kax_chapters_cptr parse_cue_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, const std::string &language, const std::string &charset, KaxTags **tags = nullptr);
