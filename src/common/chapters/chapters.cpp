@@ -126,8 +126,6 @@ probe_simple_chapters(mm_text_io_c *in) {
      for all entries.
    \param charset The charset the chapters are supposed to be it. The entries
      will be converted to UTF-8 if necessary.
-   \param exception_on_error If set to \c true then an exception is thrown
-     if an error occurs. Otherwise \c nullptr will be returned.
 
    \return The chapters parsed from the file or \c nullptr if an error occured.
 */
