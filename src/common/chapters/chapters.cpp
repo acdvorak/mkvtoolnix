@@ -318,13 +318,19 @@ parse_mpls_chapters(mm_text_io_c *in,
     : !g_default_chapter_language.empty() ? g_default_chapter_language
     :                                       "eng";
 
-  for (auto tc = tcs.begin(), end = tcs.end(); tc != end; tc++) {
+  for (size_t i = 0; tcs.size() > i; i++) {
+    auto start       = tcs[i].to_ms();
+    bool is_in_range = ((start >= min_tc) && ((start <= max_tc) || (max_tc == -1)));
+
+    if (!is_in_range)
+      continue;
+
     if (!edition)
       edition = &GetChild<KaxEditionEntry>(*chaps);
 
     atom = &GetFirstOrNextChild<KaxChapterAtom>(*edition, atom);
     GetChild<KaxChapterUID>(*atom).SetValue(create_unique_number(UNIQUE_CHAPTER_IDS));
-    GetChild<KaxChapterTimeStart>(*atom).SetValue(tc->to_ns());
+    GetChild<KaxChapterTimeStart>(*atom).SetValue((start - offset) * 1000000);
 
     auto &display = GetChild<KaxChapterDisplay>(*atom);
 
