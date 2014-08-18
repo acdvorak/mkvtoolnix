@@ -334,7 +334,7 @@ parse_mpls_chapters(mm_text_io_c *in,
 
     auto &display = GetChild<KaxChapterDisplay>(*atom);
 
-    std::string name = "Chapter";
+    std::string name = (boost::format(Y("Chapter %1%")) % (i + 1)).str();
 
     GetChild<KaxChapterString>(display).SetValue(cstrutf8_to_UTFstring(name));
     GetChild<KaxChapterLanguage>(display).SetValue(use_language);
