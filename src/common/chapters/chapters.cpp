@@ -47,13 +47,13 @@ std::string g_default_chapter_country;
    \param error The error message.
 */
 inline void
-chapter_error(const std::string &error) {
+simple_chapter_error(const std::string &error) {
   throw mtx::chapter_parser_x(boost::format(Y("Simple chapter parser: %1%\n")) % error);
 }
 
 inline void
-chapter_error(const boost::format &format) {
-  chapter_error(format.str());
+simple_chapter_error(const boost::format &format) {
+  simple_chapter_error(format.str());
 }
 
 /** \brief Reads the start of a file and checks for OGM style comments.
@@ -180,7 +180,7 @@ parse_simple_chapters(mm_text_io_c *in,
 
     if (0 == mode) {
       if (!boost::regex_match(line, matches, timecode_line_re))
-        chapter_error(boost::format(Y("'%1%' is not a CHAPTERxx=... line.")) % line);
+        simple_chapter_error(boost::format(Y("'%1%' is not a CHAPTERxx=... line.")) % line);
 
       int64_t hour = 0, minute = 0, second = 0, msecs = 0;
       parse_number(matches[1].str(), hour);
@@ -189,21 +189,21 @@ parse_simple_chapters(mm_text_io_c *in,
       parse_number(matches[4].str(), msecs);
 
       if (59 < minute)
-        chapter_error(boost::format(Y("Invalid minute: %1%")) % minute);
+        simple_chapter_error(boost::format(Y("Invalid minute: %1%")) % minute);
       if (59 < second)
-        chapter_error(boost::format(Y("Invalid second: %1%")) % second);
+        simple_chapter_error(boost::format(Y("Invalid second: %1%")) % second);
 
       start = msecs + second * 1000 + minute * 1000 * 60 + hour * 1000 * 60 * 60;
       mode  = 1;
 
       if (!boost::regex_match(line, matches, timecode_re))
-        chapter_error(boost::format(Y("'%1%' is not a CHAPTERxx=... line.")) % line);
+        simple_chapter_error(boost::format(Y("'%1%' is not a CHAPTERxx=... line.")) % line);
 
       timecode_as_string = matches[1].str();
 
     } else {
       if (!boost::regex_match(line, matches, name_line_re))
-        chapter_error(boost::format(Y("'%1%' is not a CHAPTERxxNAME=... line.")) % line);
+        simple_chapter_error(boost::format(Y("'%1%' is not a CHAPTERxxNAME=... line.")) % line);
 
       std::string name = matches[1].str();
       if (name.empty())
@@ -283,7 +283,7 @@ parse_mpls_chapters(mm_text_io_c *in,
 
   auto mpls = mtx::mpls::parser_c{};
   if (!mpls.parse(in))
-    chapter_error(boost::format(Y("Not a valid MPLS playlist file.")));
+    simple_chapter_error(boost::format(Y("Not a valid MPLS playlist file.")));
 
   kax_chapters_cptr chaps{new KaxChapters};
   KaxChapterAtom *atom     = nullptr;
