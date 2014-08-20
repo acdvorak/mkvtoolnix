@@ -47,12 +47,12 @@ std::string g_default_chapter_country;
    \param error The error message.
 */
 inline void
-simple_chapter_error(const std::string &error) {
+simple_chapter_error(std::string const &error) {
   throw mtx::chapter_parser_x(boost::format(Y("Simple chapter parser: %1%\n")) % error);
 }
 
 inline void
-simple_chapter_error(const boost::format &format) {
+simple_chapter_error(boost::format const &format) {
   simple_chapter_error(format.str());
 }
 
@@ -61,12 +61,12 @@ simple_chapter_error(const boost::format &format) {
    \param error The error message.
 */
 inline void
-mpls_chapter_error(const std::string &error) {
+mpls_chapter_error(std::string const &error) {
   throw mtx::chapter_parser_x(boost::format(Y("MPLS chapter parser: %1%\n")) % error);
 }
 
 inline void
-mpls_chapter_error(const boost::format &format) {
+mpls_chapter_error(boost::format const &format) {
   mpls_chapter_error(format.str());
 }
 
@@ -149,8 +149,8 @@ parse_simple_chapters(mm_text_io_c *in,
                       int64_t min_tc,
                       int64_t max_tc,
                       int64_t offset,
-                      const std::string &language,
-                      const std::string &charset) {
+                      std::string const &language,
+                      std::string const &charset) {
   assert(in);
 
   in->setFilePointer(0);
@@ -290,7 +290,7 @@ parse_mpls_chapters(mm_text_io_c *in,
                     int64_t min_tc,
                     int64_t max_tc,
                     int64_t offset,
-                    const std::string &language) {
+                    std::string const &language) {
   assert(in);
 
   in->setFilePointer(0);
@@ -380,15 +380,15 @@ parse_mpls_chapters(mm_text_io_c *in,
 
    \return The chapters parsed from the file or \c nullptr if an error occured.
 
-   \see ::parse_chapters(mm_text_io_c *in,int64_t min_tc,int64_t max_tc, int64_t offset,const std::string &language,const std::string &charset,bool exception_on_error,bool *is_simple_format,KaxTags **tags)
+   \see ::parse_chapters(mm_text_io_c *in,int64_t min_tc,int64_t max_tc, int64_t offset,std::string const &language,std::string const &charset,bool exception_on_error,bool *is_simple_format,KaxTags **tags)
 */
 kax_chapters_cptr
-parse_chapters(const std::string &file_name,
+parse_chapters(std::string const &file_name,
                int64_t min_tc,
                int64_t max_tc,
                int64_t offset,
-               const std::string &language,
-               const std::string &charset,
+               std::string const &language,
+               std::string const &charset,
                bool exception_on_error,
                bool *is_simple_format,
                KaxTags **tags) {
@@ -443,15 +443,15 @@ parse_chapters(const std::string &file_name,
 
    \return The chapters parsed from the file or \c nullptr if an error occured.
 
-   \see ::parse_chapters(const std::string &file_name,int64_t min_tc,int64_t max_tc, int64_t offset,const std::string &language,const std::string &charset,bool exception_on_error,bool *is_simple_format,KaxTags **tags)
+   \see ::parse_chapters(std::string const &file_name,int64_t min_tc,int64_t max_tc, int64_t offset,std::string const &language,std::string const &charset,bool exception_on_error,bool *is_simple_format,KaxTags **tags)
 */
 kax_chapters_cptr
 parse_chapters(mm_text_io_c *in,
                int64_t min_tc,
                int64_t max_tc,
                int64_t offset,
-               const std::string &language,
-               const std::string &charset,
+               std::string const &language,
+               std::string const &charset,
                bool exception_on_error,
                bool *is_simple_format,
                KaxTags **tags) {

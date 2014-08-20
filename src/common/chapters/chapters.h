@@ -37,8 +37,8 @@ namespace mtx {
   protected:
     std::string m_message;
   public:
-    chapter_parser_x(const std::string &message)  : m_message(message)       { }
-    chapter_parser_x(const boost::format &message): m_message(message.str()) { }
+    chapter_parser_x(std::string const &message)  : m_message(message)       { }
+    chapter_parser_x(boost::format const &message): m_message(message.str()) { }
     virtual ~chapter_parser_x() throw() { }
 
     virtual const char *what() const throw() {
@@ -53,22 +53,22 @@ class mm_text_io_c;
 typedef std::shared_ptr<KaxChapters> kax_chapters_cptr;
 
 kax_chapters_cptr
-parse_chapters(const std::string &file_name, int64_t min_tc = 0, int64_t max_tc = -1, int64_t offset = 0, const std::string &language = "", const std::string &charset = "",
+parse_chapters(std::string const &file_name, int64_t min_tc = 0, int64_t max_tc = -1, int64_t offset = 0, std::string const &language = "", std::string const &charset = "",
                bool exception_on_error = false, bool *is_simple_format = nullptr, KaxTags **tags = nullptr);
 
 kax_chapters_cptr
-parse_chapters(mm_text_io_c *io, int64_t min_tc = 0, int64_t max_tc = -1, int64_t offset = 0, const std::string &language = "", const std::string &charset = "",
+parse_chapters(mm_text_io_c *io, int64_t min_tc = 0, int64_t max_tc = -1, int64_t offset = 0, std::string const &language = "", std::string const &charset = "",
                bool exception_on_error = false, bool *is_simple_format = nullptr, KaxTags **tags = nullptr);
 
 bool probe_simple_chapters(mm_text_io_c *in);
-kax_chapters_cptr parse_simple_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, const std::string &language, const std::string &charset);
+kax_chapters_cptr parse_simple_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, std::string const &language, std::string const &charset);
 
 bool probe_mpls_chapters(mm_text_io_c *in);
-kax_chapters_cptr parse_mpls_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, const std::string &language, const std::string &charset);
+kax_chapters_cptr parse_mpls_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, std::string const &language, std::string const &charset);
 
 extern std::string g_cue_to_chapter_name_format;
 bool probe_cue_chapters(mm_text_io_c *in);
-kax_chapters_cptr parse_cue_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, const std::string &language, const std::string &charset, KaxTags **tags = nullptr);
+kax_chapters_cptr parse_cue_chapters(mm_text_io_c *in, int64_t min_tc, int64_t max_tc, int64_t offset, std::string const &language, std::string const &charset, KaxTags **tags = nullptr);
 
 void write_chapters_simple(int &chapter_num, KaxChapters *chapters, mm_io_c *out);
 
