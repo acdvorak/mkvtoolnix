@@ -297,7 +297,7 @@ parse_mpls_chapters(mm_text_io_c *in,
 
   auto mpls = mtx::mpls::parser_c{};
   if (!mpls.parse(in))
-    mpls_chapter_error(boost::format(Y("File is not a valid MPLS playlist.")));
+    mpls_chapter_error(boost::format(Y("The file is not a valid MPLS playlist.")));
 
   kax_chapters_cptr chaps{new KaxChapters};
   KaxChapterAtom *atom     = nullptr;
